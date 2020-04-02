@@ -1,5 +1,11 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const usersSchema = new mongoose.Schema({ email: String, pwd: String, modules: Array});
+var Schema = mongoose.Schema,
+  ObjectId = Schema.ObjectId;
+const usersSchema = new mongoose.Schema({
+  email: String,
+  pwd: String,
+  modules: [{type: ObjectId, ref: 'modules'}],
+});
 
 module.exports.users = mongoose.model("users", usersSchema);

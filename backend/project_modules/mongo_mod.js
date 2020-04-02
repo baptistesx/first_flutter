@@ -1,11 +1,12 @@
 var mongoose = require("mongoose");
+var modules = require("./models/modulesSchema").modules;
 var users = require("./models/userSchema").users;
 var jwt = require("jsonwebtoken");
 var crypto = require("crypto");
 
 module.exports.connectDB = function() {
     //Set up default mongoose connection
-    var mongoDB = "mongodb://127.0.0.1:8080/project";
+    var mongoDB = "mongodb+srv://baptistesx:Mydatabase@cluster0-5lcx3.mongodb.net/project";
     mongoose.connect(mongoDB, {
         useNewUrlParser: true
     });
