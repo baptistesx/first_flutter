@@ -8,8 +8,8 @@ const modulesSchema = new mongoose.Schema({
   name: String,
   place: String,
   used: Boolean,
-  user: {type: ObjectId, ref: 'users'},
-  sensors: [{type: ObjectId, ref: 'sensors'}]
+  sensors: [{ type: ObjectId, ref: "sensors" }],
+  user: { type: ObjectId, ref: "users" },
 });
 
 module.exports.modules = mongoose.model("modules", modulesSchema);

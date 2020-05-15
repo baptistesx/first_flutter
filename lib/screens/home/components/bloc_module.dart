@@ -5,40 +5,48 @@ import 'package:flutter/material.dart';
 class SensorsList extends StatelessWidget {
   final List<Sensor> sensors;
 
-  SensorsList({Key key, this.sensors}) : super(key: key);
+  SensorsList({this.sensors, Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    print(sensors.length);
     if (sensors.length == 0) {
       print("pas de sensors");
       return Center(child: Text("pas de sensors !"));
     } else {
-      return ListView.builder(
-          // Let the ListView know how many items it needs to build.
-          itemCount: sensors.length,
-          // Provide a builder function. This is where the magic happens.
-          // Convert each item into a widget based on the type of item it is.
-          itemBuilder: (context, index) {
-            final item = sensors[index];
-
-            return ListTile(
-              title: Text(item.name),
-              subtitle: Text("dernier relevé :30"),
-            );
-          },
-        );
+      print("voici les sensors:");
+      print(sensors);
+      return Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+        // Let the ListView know how many items it needs to build.
+        itemCount: sensors.length,
+        // Provide a builder function. This is where the magic happens.
+        // Convert each item into a widget based on the type of item it is.
+        itemBuilder: (context, index) {
+          final item = sensors[index];
+          return Container(
+            // height: 50,
+            child: Column(children: [Text(item.name)]),
+          );
+          // return ListTile(
+          //   title: Text(item.name),
+          //   subtitle: Text("dernier relevé :30"),
+          // );
+        },
+      ));
     }
   }
 }
 
-class BlocModule  extends StatelessWidget {
+class BlocModule extends StatelessWidget {
   final Module module;
 
   BlocModule({@required this.module});
 
   String getModuleNamePlace(module) {
     // print(module);
-    return module.name;//+ " (" + module.place + ")";
+    return module.name; //+ " (" + module.place + ")";
   }
 
   @override
@@ -55,6 +63,7 @@ class BlocModule  extends StatelessWidget {
         ),
         children: [
           Text('Capteurs associés:'),
+          // Text(module.sensors.toString()),
           SensorsList(sensors: module.sensors)
           // ListView.builder(
           //   module.sensors.count

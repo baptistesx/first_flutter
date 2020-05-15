@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cult_connect/screens/add_first_module_page.dart';
 import 'package:cult_connect/screens/home/home_page.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +92,6 @@ class _ConnectionFormState extends State<ConnectionForm> {
                       print("connexion button clicked");
                       var email = _emailController.text;
                       var pwd = _pwdController.text;
-
                       var jwt = await fetchConnectionIdentifiers(email, pwd);
                       print(jwt);
                       if (jwt != null) {
@@ -100,6 +100,7 @@ class _ConnectionFormState extends State<ConnectionForm> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
+                                // AddFirstModulePage.test(jwt)));
                                     HomePage.fromBase64(jwt)));
                       } else {
                         displayDialog(context, "An Error Occurred",

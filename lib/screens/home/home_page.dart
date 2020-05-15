@@ -1,10 +1,10 @@
-import 'package:cult_connect/screens/home/components/add_module_form.dart';
-import 'package:cult_connect/screens/home/components/module.dart';
 import 'dart:convert'; // show json, base64, ascii;
-
+import 'package:cult_connect/components/drawer.dart';
+import 'package:cult_connect/screens/home/components/add_module_dialog.dart';
+import 'package:cult_connect/screens/home/components/module.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   final String jwt;
@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Accueil'),
+          title: Text('Homepage'),
         ),
         body: Column(children: [
           RaisedButton(
@@ -36,20 +36,12 @@ class _HomePageState extends State<HomePage> {
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Column(mainAxisSize: MainAxisSize.min, children: [
-                        Text('Ajout d\'un module'),
-                        Text('Les id se trouvent sur le boitier',
-                            style: TextStyle(
-                              fontSize: 15,
-                            )),
-                      ]),
-                      content: AddModuleForm(jwt, payload),
-                    );
+                    return AddModuleDialog(jwt, payload);
                   });
             },
-            child: Text('Ajouter un module'),
+            child: Text('Add a module'),
           ),
+          Text("Sensors values displayed are the most recent."),
           Expanded(
             child: FutureBuilder<List<Module>>(
               future: fetchModules(http.Client(), jwt),
@@ -63,75 +55,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ]),
-
-        //   Text('Liste des modules:'),
-        //   // FutureBuilder<List<Module>>(
-        //   //   future: fetchModule(http.Client(), jwt),
-        //   //   builder: (context, snapshot) {
-        //   //     if (snapshot.hasError) print(snapshot.error);
-
-        //   //     return snapshot.hasData
-        //   //         ? ModulesList(modules: snapshot.data)
-        //   //         : Center(child: CircularProgressIndicator());
-        //   //   },
-        //   //   // BlocModule(name: "MonCapteur1", lastValue: 30, unit: "°C"),
-        //   //   // BlocModule(name: "MonCapteur2", lastValue: 0, unit: "°C"),
-        //   // )
-        // ]),
-        drawer: Drawer(
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              DrawerHeader(
-                child: Center(
-                  child: Text('Menu'),
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.yellow,
-                ),
-              ),
-              ListTile(
-                title: Text('Accueil'),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('Configuration'),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  // Navigator.pop(context);
-                  Navigator.pushNamed(context, '/config');
-                },
-              ),
-              ListTile(
-                title: Text('Evolution'),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  // Navigator.pop(context);
-                  Navigator.pushNamed(context, '/evol');
-                },
-              ),
-              ListTile(
-                title: Text('Carte SD'),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  // Navigator.pop(context);
-                  Navigator.pushNamed(context, '/sd');
-                },
-              ),
-            ],
-          ),
-        ));
+        drawer: MyDrawer());
   }
 }

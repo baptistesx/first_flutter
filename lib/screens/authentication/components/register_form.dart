@@ -1,19 +1,12 @@
 import 'dart:async';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:convert' show json, base64, ascii;
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 const SERVER_IP = 'http://10.0.2.2:8081';
-// const SERVER_IP = 'http://192.168.1.22:8080';
 
 Future<int> attemptSignUp(String email, String pwd) async {
-  print("launch request");
-  print(email + " et " + pwd);
   var response = await http
       .post(SERVER_IP + '/signup', body: {"email": email, "pwd": pwd});
-  print(response.body);
   return response.statusCode;
 }
 
@@ -28,7 +21,8 @@ class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController _pwdController = TextEditingController();
   final TextEditingController _pwdConfirmController = TextEditingController();
 
-  void displayDialog(BuildContext context, String title, String text) =>
+  void displayDialog(
+          BuildContext context, String title, String text, bool res) =>
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -37,8 +31,11 @@ class _RegisterFormState extends State<RegisterForm> {
             Text(text),
             RaisedButton(
                 onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  if (res) {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  } else
+                    Navigator.pop(context);
                 },
                 child: Text("OK"))
           ]),
@@ -48,6 +45,7 @@ class _RegisterFormState extends State<RegisterForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _signupFormKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -58,10 +56,6 @@ class _RegisterFormState extends State<RegisterForm> {
               hintText: 'Your email',
               labelText: 'Email *',
             ),
-            onSaved: (String value) {
-              // This optional block of code can be used to run
-              // code when the user saves the form.
-            },
             validator: (String value) {
               if (value.contains("..") ||
                   !value.contains('@') ||
@@ -76,7 +70,6 @@ class _RegisterFormState extends State<RegisterForm> {
               controller: _pwdController,
               obscureText: true,
               decoration: const InputDecoration(
-                // icon: Icon(Icons.person),
                 hintText: 'Password',
                 labelText: 'Password *',
               ),
@@ -93,12 +86,11 @@ class _RegisterFormState extends State<RegisterForm> {
               controller: _pwdConfirmController,
               obscureText: true,
               decoration: const InputDecoration(
-                // icon: Icon(Icons.person),
                 hintText: 'Password confirmation',
                 labelText: 'Password confirmation *',
               ),
               validator: (String value) {
-                return _pwdController.text == _pwdConfirmController.text
+                return _pwdController.text != _pwdConfirmController.text
                     ? 'Different from the password'
                     : null;
               },
@@ -109,25 +101,25 @@ class _RegisterFormState extends State<RegisterForm> {
               padding: const EdgeInsets.all(8.0),
               child: RaisedButton(
                 onPressed: () async {
+                  print(_pwdController.text);
+                  print(_pwdConfirmController.text);
                   if (_signupFormKey.currentState.validate()) {
                     var email = _emailController.text;
                     var pwd = _pwdController.text;
-
                     var res = await attemptSignUp(email, pwd);
                     if (res == 201) {
                       displayDialog(context, "Success",
-                          "The user was created. Log in now.");
+                          "The user was created. Log in now.", true);
                     } else if (res == 409) {
                       displayDialog(
                           context,
                           "That username is already registered",
-                          "Please try to sign up using another username or log in if you already have an account.");
+                          "Please try to sign up using another username or log in if you already have an account.",
+                          false);
                     } else {
-                      displayDialog(
-                          context, "Error", "An unknown error occurred.");
+                      displayDialog(context, "Error",
+                          "An unknown error occurred.", false);
                     }
-
-                    // Navigator.pop(context);
                   }
                 },
                 child: Text('Valider'),

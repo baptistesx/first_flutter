@@ -1,13 +1,11 @@
 import 'dart:async';
-import 'package:cult_connect/main.dart';
 import 'package:cult_connect/screens/home/home_page.dart';
-
 import 'dart:convert' show json, base64, ascii;
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 const SERVER_IP = 'http://10.0.2.2:8081';
+
 Future<String> addModule(name, place, publicID, privateID, jwt) async {
   print("launch request");
   final response = await http.post(SERVER_IP + '/api/user/module', headers: {
@@ -66,12 +64,14 @@ class _AddModuleFormState extends State<AddModuleForm> {
               Text(text),
               RaisedButton(
                   onPressed: () {
-                    if (text == "Le module a bien été ajouté.")
+                    if (text == "The module has been added with success!") {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  HomePage.fromBase64(jwt)));
+                              builder: (context) => HomePage.fromBase64(jwt)));
+                    } else {
+                      Navigator.pop(context);
+                    }
                   },
                   child: Text("OK"))
             ])),
@@ -171,7 +171,7 @@ class _AddModuleFormState extends State<AddModuleForm> {
                         var privateID = _privateIDController.text;
                         addModule(name, place, publicID, privateID, jwt)
                             .then((res) {
-                          displayDialog(context, "Resultat", res);
+                          displayDialog(context, "Result", res);
                           print(res);
                         });
                       },
