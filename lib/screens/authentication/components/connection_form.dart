@@ -5,8 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-const SERVER_IP = 'http://10.0.2.2:8081';
-
+// const SERVER_IP = 'http://10.0.2.2:8081';
+const SERVER_IP = 'http://192.168.1.26:8081';
 final storage = FlutterSecureStorage();
 
 Future<String> fetchConnectionIdentifiers(String email, String pwd) async {

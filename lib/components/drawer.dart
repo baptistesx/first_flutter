@@ -1,3 +1,4 @@
+import 'package:cult_connect/screens/authentication/components/connection_form.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -38,6 +39,13 @@ class MyDrawer extends StatelessWidget{
                 title: Text('SD card'),
                 onTap: () {
                   Navigator.pushNamed(context, '/sd');
+                },
+              ),
+              ListTile(
+                title: Text('Log out'),
+                onTap: () {
+                  storage.write(key: "jwt", value: "");
+                  Navigator.pushNamed(context, '/');
                 },
               ),
             ],

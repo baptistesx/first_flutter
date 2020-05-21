@@ -8,7 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-const SERVER_IP = 'http://10.0.2.2:8081';
+// const SERVER_IP = 'http://10.0.2.2:8081';
+const SERVER_IP = 'http://192.168.1.26:8081';
 
 Object getModules(http.Client client, jwt) async {
   final response = await client
@@ -86,7 +87,7 @@ class ModulesList extends StatelessWidget {
   Widget build(BuildContext context) {
     if (modules.length == 0) {
       print("pas de module");
-      return Center(child: Text("Ajoutez votre premier module !"));
+      return Center(child: Text("Add your first module !", style: TextStyle(fontSize: 25),));
     } else {
       return new ListView.builder(
           itemCount: modules.length,

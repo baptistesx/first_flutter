@@ -4,8 +4,8 @@ import 'dart:convert' show json, base64, ascii;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-const SERVER_IP = 'http://10.0.2.2:8081';
-
+// const SERVER_IP = 'http://10.0.2.2:8081';
+const SERVER_IP = 'http://192.168.1.26:8081';
 Future<String> addModule(name, place, publicID, privateID, jwt) async {
   print("launch request");
   final response = await http.post(SERVER_IP + '/api/user/module', headers: {
@@ -90,8 +90,8 @@ class _AddModuleFormState extends State<AddModuleForm> {
                   controller: _nameController,
                   decoration: const InputDecoration(
                     icon: Icon(Icons.person),
-                    hintText: 'Surnom du module',
-                    labelText: 'Surnom *',
+                    hintText: 'Nickname',
+                    labelText: 'Nickname *',
                   ),
                   onSaved: (String value) {
                     // This optional block of code can be used to run
@@ -99,7 +99,7 @@ class _AddModuleFormState extends State<AddModuleForm> {
                   },
                   validator: (String value) {
                     return value.length == 0
-                        ? 'Veuillez entrer un nom de module'
+                        ? 'Please, enter a module name'
                         : null;
                   },
                 ),
@@ -108,8 +108,8 @@ class _AddModuleFormState extends State<AddModuleForm> {
                   child: TextFormField(
                     controller: _placeController,
                     decoration: const InputDecoration(
-                      hintText: 'Emplacement',
-                      labelText: 'Emplacement *',
+                      hintText: 'Place',
+                      labelText: 'Place *',
                     ),
                     onSaved: (String value) {
                       // This optional block of code can be used to run
@@ -117,7 +117,7 @@ class _AddModuleFormState extends State<AddModuleForm> {
                     },
                     validator: (String value) {
                       return value.length == 0
-                          ? 'Veuillez entrer un emplacement'
+                          ? 'Please, enter a place'
                           : null;
                     },
                   ),
@@ -127,8 +127,8 @@ class _AddModuleFormState extends State<AddModuleForm> {
                   child: TextFormField(
                     controller: _publicIDController,
                     decoration: const InputDecoration(
-                      hintText: 'ID publique',
-                      labelText: 'ID publique *',
+                      hintText: 'Public ID',
+                      labelText: 'Public ID *',
                     ),
                     onSaved: (String value) {
                       // This optional block of code can be used to run
@@ -136,7 +136,7 @@ class _AddModuleFormState extends State<AddModuleForm> {
                     },
                     validator: (String value) {
                       return value.length == 0
-                          ? 'Veuillez entrer l\'ID publique'
+                          ? 'Please, enter public ID'
                           : null;
                     },
                   ),
@@ -146,8 +146,8 @@ class _AddModuleFormState extends State<AddModuleForm> {
                   child: TextFormField(
                     controller: _privateIDController,
                     decoration: const InputDecoration(
-                      hintText: 'ID privée',
-                      labelText: 'ID privée *',
+                      hintText: 'Private ID',
+                      labelText: 'Private ID *',
                     ),
                     onSaved: (String value) {
                       // This optional block of code can be used to run
@@ -155,7 +155,7 @@ class _AddModuleFormState extends State<AddModuleForm> {
                     },
                     validator: (String value) {
                       return value.length == 0
-                          ? 'Veuillez entrer l\'ID privée'
+                          ? 'Please, enter private ID'
                           : null;
                     },
                   ),
@@ -175,7 +175,7 @@ class _AddModuleFormState extends State<AddModuleForm> {
                           print(res);
                         });
                       },
-                      child: Text('Ajouter')),
+                      child: Text('Add')),
                 ),
               ]),
             )));
