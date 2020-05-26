@@ -1,3 +1,4 @@
+import 'package:cult_connect/screens/home/components/actuator.dart';
 import 'package:cult_connect/screens/home/components/bloc_module.dart';
 import 'package:cult_connect/screens/home/components/data.dart';
 import 'package:cult_connect/screens/home/components/sensor.dart';
@@ -9,8 +10,8 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 // const SERVER_IP = 'http://10.0.2.2:8081';
-const SERVER_IP = 'http://192.168.1.26:8081';
-
+// const SERVER_IP = 'http://192.168.1.26:8081';
+const SERVER_IP = 'http://192.168.0.24:8081';
 Object getModules(http.Client client, jwt) async {
   final response = await client
       .get(SERVER_IP + '/api/user/modules', headers: {"Authorization": jwt});
@@ -37,16 +38,25 @@ class Module {
   final String name;
   final String place;
   final List<Sensor> sensors;
+  final List<Actuator> actuators;
 
-  Module({this.name, this.place, this.sensors}); //, this.capteurs});
+  Module(
+      {this.name,
+      this.place,
+      this.sensors,
+      this.actuators}); //, this.capteurs});
 
   factory Module.fromJson(Map<String, dynamic> json) {
     return Module(
-        name: json['name'] as String,
-        place: json['place'] as String,
-        sensors: (json['sensors'] as List)
-            .map((sensor) => Sensor.fromJson(sensor))
-            .toList());
+      name: json['name'] as String,
+      place: json['place'] as String,
+      sensors: (json['sensors'] as List)
+          .map((sensor) => Sensor.fromJson(sensor))
+          .toList(),
+      actuators: (json['actuators'] as List)
+          .map((actuator) => Actuator.fromJson(actuator))
+          .toList(),
+    );
   }
 
   @override
@@ -78,25 +88,35 @@ class Module {
   }
 }
 
-class ModulesList extends StatelessWidget {
+class ModulesList extends StatefulWidget {
   final List<Module> modules;
 
   ModulesList({Key key, this.modules}) : super(key: key);
 
   @override
+  _ModulesListState createState() => _ModulesListState();
+}
+
+class _ModulesListState extends State<ModulesList> {
+  @override
   Widget build(BuildContext context) {
-    if (modules.length == 0) {
+    if (widget.modules.length == 0) {
       print("pas de module");
-      return Center(child: Text("Add your first module !", style: TextStyle(fontSize: 25),));
+      return Center(
+          child: Text(
+        "Add your first module !",
+        style: TextStyle(fontSize: 25),
+      ));
     } else {
       return new ListView.builder(
-          itemCount: modules.length,
+          itemCount: widget.modules.length,
           itemBuilder: (context, index) {
             return new ExpansionTile(
-              title: new Text(modules[index].name),
+              title: new Text(widget.modules[index].name),
               children: <Widget>[
                 new Column(
-                  children: _buildExpandableContent(modules[index], context),
+                  children:
+                      _buildExpandableContent(widget.modules[index], context),
                 )
               ],
             );
@@ -120,7 +140,6 @@ class ModulesList extends StatelessWidget {
     for (Sensor content in module.sensors) {
       int i = 0;
       for (SensorData sensorDat in content.sensorData) {
-        print("iii=" + i.toString());
         columnContent.add(
           new ListTile(
               title: new Column(children: [
@@ -139,19 +158,62 @@ class ModulesList extends StatelessWidget {
                     ),
                   ],
                 ),
-                Text(DateFormat('MMMM d, kk:mm').format(sensorDat.data.values[0].date).toString() +
+                Text(DateFormat('MMMM d, kk:mm')
+                        .format(sensorDat.data.values[0].date)
+                        .toString() +
                     ": " +
                     sensorDat.data.values[0].value.toString() +
                     sensorDat.unit)
               ]),
               onTap: () {
                 // print("iii vaut:"+i.toString());
-                content.pushSensorDetails(context, content.sensorData.indexOf(sensorDat));
+                content.pushSensorDetails(
+                    context, content.sensorData.indexOf(sensorDat));
               }),
         );
         i++;
       }
     }
+
+    for (Actuator content in module.actuators) {
+      columnContent.add(
+        new ListTile(
+            title: new Column(children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    content.name,
+                    style: new TextStyle(
+                        fontSize: 18.0, color: Colors.orangeAccent),
+                  ),
+                  Switch(
+                    value: content.isSwitched,
+                    onChanged: (value) {
+                      setState(() {
+                        content.toggleOnServer(value);
+                        content.isSwitched = value;
+                      });
+                    },
+                    activeTrackColor: Colors.lightGreenAccent,
+                    activeColor: Colors.green,
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.grey,
+                    size: 15,
+                  ),
+                ],
+              ),
+            ]),
+            onTap: () {
+              // print("iii vaut:"+i.toString());
+              // content.pushSensorDetails(
+              //     context, content.sensorData.indexOf(sensorDat));
+            }),
+      );
+    }
+
     return columnContent;
   }
 }

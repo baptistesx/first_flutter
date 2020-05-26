@@ -7,6 +7,7 @@ var users = require("./project_modules/models/userSchema").users;
 var modules = require("./project_modules/models/modulesSchema").modules;
 
 var sensors = require("./project_modules/models/sensorsSchema").sensors;
+var actuators = require("./project_modules/models/actuatorsSchema").actuators;
 var datas = require("./project_modules/models/dataSchema").datas;
 
 var jwt = require("jsonwebtoken");
@@ -207,8 +208,31 @@ function custom_sort(a, b) {
   console.log(a.date);
   return -(new Date(a.date).getTime() - new Date(b.date).getTime());
 }
+
+app.post("/api/user/setActuator", function (req, res) {
+  console.log(req.body);
+  var id = req.body.actuatorId;
+  var value = req.body.value;
+
+  //Faire réelle requete au module et changer etat en bdd que si validé par module
+
+  actuators
+    .updateOne(
+      { _id: id },
+      {
+        $set: {
+          state: value,
+        },
+      }
+    )
+    .then((obj) => {
+      res.status(200);
+      res.send("Success");
+    });
+});
+
 app.get("/api/user/modules", function (req, res) {
-  var dataIdTab=[];
+  var dataIdTab = [];
   // var obj = new Object({aaaa: "ahah", bbbb: "bhbh"});
   // console.log("obj=%j",obj)
   // var newObj = obj.toString().replace(/ahah/, "chch");
@@ -269,22 +293,25 @@ app.get("/api/user/modules", function (req, res) {
         path: "modules",
         model: "modules",
         //Remplace l'ObjectId du champ "sensors" du module peuplé précédemment par l'objet correpsondant
-        populate: {
-          path: "sensors",
-          model: "sensors",
-          populate: {
-            path: "sensorData.data",
-            model: "datas",
-            options:{limit: 0}
+        populate: [
+          {
+            path: "sensors",
+            model: "sensors",
+            populate: {
+              path: "sensorData.data",
+              model: "datas",
+              options: { limit: 0 },
+            },
           },
-        },
+          {
+            path: "actuators",
+            model: "actuators",
+          },
+        ],
       })
       .exec(function (err, user) {
         if (err) return handleError(err);
         if (ok) {
-
-          
-
           // for (let [key, module] of Object.entries(user.modules)) {
           //   for (let [key, sensor] of Object.entries(module.sensors)) {
           //     for (let [key, sensorData] of Object.entries(sensor.sensorData)) {
@@ -312,7 +339,6 @@ app.get("/api/user/modules", function (req, res) {
           // });
           // console.log("%j", user);
           res.send(user.modules);
-          
         }
       });
   } catch {

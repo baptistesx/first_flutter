@@ -20,8 +20,8 @@ class DetermineFirstPage extends StatelessWidget {
 
   Future<String> get jwtOrEmpty async {
     //TODO: To uncomment to keep always connected once connected
-    // var jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvdG9AZ21haWwuY29tIiwiaWF0IjoxNTg5NDc3NTA0LCJleHAiOjE1OTA3NzM1MDR9.DBR07BTavxYWR-skM-B615rDbMY_syOQspP0Vfe6ICA";
-    var jwt = await storage.read(key: "jwt");
+    var jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvdG9AZ21haWwuY29tIiwiaWF0IjoxNTkwNDg3NjIxLCJleHAiOjE1OTE3ODM2MjF9.VZ6rytaaOyxgk4yLF_GTu8dDRv3FWoMWmF5JOYW6qM4";
+    // var jwt = await storage.read(key: "jwt");
     // if (jwt == null)
     // return "";
     return jwt;
