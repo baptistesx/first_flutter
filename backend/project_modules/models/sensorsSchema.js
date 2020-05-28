@@ -5,7 +5,11 @@ var Schema = mongoose.Schema,
 const sensorsSchema = new mongoose.Schema({
   name: String,
   sensorData: [
-    { dataType: String, unit: String, data: { type: ObjectId, ref: "datas" } },
+    { dataType: String, unit: String, 
+      limitMin: Number,
+      limitMax: Number,
+      setupValue: Number,
+      data: { type: ObjectId, ref: "datas" } },
   ],
   module: { type: ObjectId, ref: "modules" },
 });

@@ -12,13 +12,13 @@ class AddFirstModulePage extends StatefulWidget {
 
   AddFirstModulePage(this.jwt, this.payload, {Key key}) : super(key: key);
 
-factory AddFirstModulePage.test(String jwt){
-  print('okoko');
-  return AddFirstModulePage(
-      jwt,
-      json.decode(
-          ascii.decode(base64.decode(base64.normalize(jwt.split(".")[1])))));
-}
+  factory AddFirstModulePage.test(String jwt) {
+    print('okoko');
+    return AddFirstModulePage(
+        jwt,
+        json.decode(
+            ascii.decode(base64.decode(base64.normalize(jwt.split(".")[1])))));
+  }
 
   factory AddFirstModulePage.fromBase64(String jwt) => AddFirstModulePage(
       jwt,
@@ -37,9 +37,9 @@ class _AddFirstModulePageState extends State<AddFirstModulePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: 
-        // Column(children: [
-      Container(
+      body:
+          // Column(children: [
+          Container(
         color: Colors.red,
       ),
       // Expanded(
@@ -54,7 +54,7 @@ class _AddFirstModulePageState extends State<AddFirstModulePage> {
       //     },
       //   ),
       // ),
-    // ]
+      // ]
     );
   }
 }

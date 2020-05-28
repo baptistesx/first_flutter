@@ -15,7 +15,7 @@ class _TemperatureNominaleSlider extends State<TemperatureNominaleSlider> {
       label: "${sliderValue.toStringAsFixed(1)}",
       min: minValue,
       max: maxValue,
-      divisions: ((maxValue-minValue)*2).round(),
+      divisions: ((maxValue - minValue) * 2).round(),
       value: sliderValue,
       activeColor: Color(0xff512ea8),
       inactiveColor: Color(0xffac9bcc),
@@ -34,17 +34,19 @@ class TemperatureOKSlider extends StatefulWidget {
 }
 
 class _TemperatureOKSlider extends State<TemperatureOKSlider> {
-  RangeValues sliderValues = RangeValues(0.0, 1.0);
-  var minValue = 0.0;
-  var maxValue = 10.0;
+  RangeValues sliderValues = RangeValues(25.0, 35.0);
+  double minValue = 0.0;
+  double maxValue = 50.0;
 
   @override
   Widget build(BuildContext context) {
     return new RangeSlider(
-      labels: RangeLabels("ok", "ko"),//sliderValues.start.toStringAsFixed(1), sliderValues.end.toStringAsFixed(1)),
+      labels: RangeLabels('${sliderValues.start.toStringAsFixed(1)}',
+          '${sliderValues.end.toStringAsFixed(1)}'),
+      values: sliderValues,
       min: minValue,
       max: maxValue,
-      divisions: 2,//((maxValue-minValue)*2).round(),
+      divisions: ((maxValue - minValue) * 2).round(),
       activeColor: Color(0xff512ea8),
       inactiveColor: Color(0xffac9bcc),
       onChanged: (newValues) {
@@ -64,12 +66,15 @@ class TemperatureMinSlider extends StatefulWidget {
 
 class _TemperatureMinSlider extends State<TemperatureMinSlider> {
   var sliderValue = 0.0;
-
+  var minValue = 0.0;
+  var maxValue = 50.0;
   @override
   Widget build(BuildContext context) {
     return new Slider(
-      min: 0.0,
-      max: 100.0,
+      label: "${sliderValue.toStringAsFixed(1)}",
+      min: minValue,
+      max: maxValue,
+      divisions: ((maxValue - minValue) * 2).round(),
       value: sliderValue,
       activeColor: Color(0xff512ea8),
       inactiveColor: Color(0xffac9bcc),
@@ -89,13 +94,16 @@ class TemperatureMaxSlider extends StatefulWidget {
 
 class _TemperatureMaxSlider extends State<TemperatureMaxSlider> {
   var sliderValue = 0.0;
-
+  var minValue = 0.0;
+  var maxValue = 50.0;
   @override
   Widget build(BuildContext context) {
     return new Slider(
-      min: 0.0,
-      max: 100.0,
+      label: "${sliderValue.toStringAsFixed(1)}",
+      min: minValue,
+      max: maxValue,
       value: sliderValue,
+      divisions: ((maxValue - minValue) * 2).round(),
       activeColor: Color(0xff512ea8),
       inactiveColor: Color(0xffac9bcc),
       onChanged: (newValue) {

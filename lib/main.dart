@@ -2,7 +2,7 @@ import 'package:cult_connect/screens/add_first_module_page.dart';
 import 'package:cult_connect/screens/configuration/configuration_page.dart';
 import 'package:cult_connect/screens/determine_first_page.dart';
 import 'package:cult_connect/screens/evolution/evolution_page.dart';
-import 'package:cult_connect/screens/home/sensor_data_page.dart';
+// import 'package:cult_connect/screens/home/sensor_data_page.dart';
 import 'package:cult_connect/screens/sd/sd_page.dart';
 import 'package:cult_connect/theme/style.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         '/config': (context) => ConfigurationPage(),
         '/evol': (context) => EvolutionPage(),
         '/sd': (context) => SdPage(),
-        '/sensorData': (context) => SensorDataPage(),
+        // '/sensorData': (context) => SensorDetailsPage(),
       },
     );
   }

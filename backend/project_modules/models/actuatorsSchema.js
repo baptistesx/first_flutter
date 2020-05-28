@@ -8,7 +8,8 @@ const actuatorsSchema = new mongoose.Schema({
   state: Boolean,
   value: Number,
   startTime: Date,
-  stopTime: Date, 
+  stopTime: Date,
+  automaticMode: Boolean
 });
 
 module.exports.actuators = mongoose.model("actuators", actuatorsSchema);

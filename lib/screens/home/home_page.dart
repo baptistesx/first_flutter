@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import 'components/module_list.dart';
+
 class HomePage extends StatefulWidget {
   final String jwt;
   final Map<String, dynamic> payload;

@@ -6,14 +6,26 @@ import 'package:intl/intl.dart';
 class SensorData {
   final String dataType;
   final String unit;
+  final double limitMin;
+  final double limitMax;
+  final double setupValue;
   final Data data;
 
-  SensorData({this.dataType, this.unit, this.data}); //, this.values});
+  SensorData(
+      {this.dataType,
+      this.unit,
+      this.limitMin,
+      this.limitMax,
+      this.setupValue,
+      this.data}); //, this.values});
 
   factory SensorData.fromJson(Map<String, dynamic> json) {
     return SensorData(
         dataType: json['dataType'],
         unit: json['unit'],
+        limitMin: json['limitMin'].toDouble(),
+        limitMax: json['limitMax'].toDouble(),
+        setupValue: json['setupValue'].toDouble(),
         data: Data.fromJson(json['data']));
   }
 }
@@ -40,7 +52,7 @@ class Value {
   factory Value.fromJson(Map<String, dynamic> json) {
     DateTime todayDate = DateTime.parse(json['date']);
     return Value(
-        date: todayDate,//DateFormat('MMMM d, kk:mm').format(todayDate),
+        date: todayDate, //DateFormat('MMMM d, kk:mm').format(todayDate),
         value: json['value']);
   }
 }

@@ -23,8 +23,8 @@ class DetermineFirstPage extends StatelessWidget {
     var jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvdG9AZ21haWwuY29tIiwiaWF0IjoxNTkwNDg3NjIxLCJleHAiOjE1OTE3ODM2MjF9.VZ6rytaaOyxgk4yLF_GTu8dDRv3FWoMWmF5JOYW6qM4";
     // var jwt = await storage.read(key: "jwt");
     // if (jwt == null)
-    // return "";
-    return jwt;
+    return "";
+    // return jwt;
   }
 
   @override

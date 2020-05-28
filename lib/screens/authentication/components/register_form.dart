@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 const SERVER_IP = 'http://192.168.0.24:8081';
 Future<int> attemptSignUp(String email, String pwd) async {
   var response = await http
-      .post(SERVER_IP + '/signup', body: {"email": email, "pwd": pwd});
+      .post(SERVER_IP + '/api/signup', body: {"email": email, "pwd": pwd});
   return response.statusCode;
 }
 

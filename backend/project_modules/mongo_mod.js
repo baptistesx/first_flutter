@@ -4,14 +4,17 @@ var users = require("./models/userSchema").users;
 var datas = require("./models/dataSchema").datas;
 var jwt = require("jsonwebtoken");
 var crypto = require("crypto");
+var sensors = require("./models/sensorsSchema").sensors;
+var validator = require("email-validator");
+var actuators = require("./models/actuatorsSchema").actuators;
+const KEY = "m yincredibl y(!!1!11!)zpG6z2s8)Key'!";
 
-module.exports.connectDB = function() {
-  //Set up default mongoose connection
-  var mongoDB =
-  "mongodb://localhost/monitoring";
+//Setup et connexion à la base de données MongoDb
+module.exports.connectDB = function () {
+  var mongoDB = "mongodb://localhost/monitoring";
   mongoose.connect(mongoDB, {
     useUnifiedTopology: true,
-    useNewUrlParser: true
+    useNewUrlParser: true,
   });
 
   //Get the default connection
@@ -21,19 +24,29 @@ module.exports.connectDB = function() {
   db.on("error", console.error.bind(console, "MongoDB connection error:"));
 };
 
-module.exports.checkJWT = function(str, KEY) {
-  return jwt.verify(str, KEY, { algorithm: "HS256" }).email;
+//Vérifie si le token match bien avec l'email
+module.exports.checkJWT = function (token, KEY) {
+  return jwt.verify(token, KEY, { algorithm: "HS256" }).email;
 };
 
-module.exports.userExists = function(email, callback) {
-  console.log("email=" + email);
-  users.findOne({ email: email }, function(err, user) {
-    console.log("user=" + user);
+//Encyrption du password reçu en paramètre
+module.exports.encryptPwd = function (pwd, callback) {
+  callback(crypto.createHash("sha256").update(pwd).digest("hex"));
+};
+//TODO: trouver comment déclarer qu'une seule fois cette fonction
+encryptPwd = function (pwd, callback) {
+  callback(crypto.createHash("sha256").update(pwd).digest("hex"));
+};
+
+//Vérifie si un utilisateur avec l'email reçue en paramètre existe
+module.exports.userExists = function (email, callback) {
+  users.findOne({ email: email }, function (err, user) {
     callback(user);
   });
 };
 
-module.exports.addModule = function(
+//Vérification des conditions et association d'un module à un utilisateur
+module.exports.addModule = function (
   user,
   moduleName,
   modulePlace,
@@ -41,57 +54,52 @@ module.exports.addModule = function(
   privateID,
   callback
 ) {
-  moduleExists(publicID, privateID, function(module) {
+  //Vérification de l'existence du module (les deux ID doivent matcher)
+  moduleExists(publicID, privateID, function (module) {
     if (module != null) {
-      console.log("le module d'id: "+publicID + "existe bien: " + module)
-      //verifie que le module existe dans modules
-
-      userOwnsThisModule(user, module, function(res) {
+      //On vérifie si l'utilisateur n'a pas déjà ajouté ce module
+      userOwnsThisModule(user, module, function (res) {
         if (res) {
-          console.log("l'utilisateur possède deja le module d'id: "+publicID)
-
+          //Cas 1: module déjà ajouté
           callback("You've already added this module.");
         } else {
-          console.log("l'utilisateur ne possède pas deja le module d'id: "+publicID)
+          //Cas 2: module non encore ajouté
 
-          //Sinon
-
-          isModuleUsed(module, function(isUsed) {
+          //On vérifie si le module est associé à un autre utilisateur
+          isModuleUsed(module, function (isUsed) {
             if (isUsed) {
-              console.log("le module d'id: "+publicID + "est deja utilisé")
-
-              //Si module deja utilisé par un autre user
+              //Cas 1: module ajouté par un autre utilisateur
               callback("This module isn't available.");
             } else {
-              console.log("le module d'id: "+publicID + "n'est pas deja utilisé => liaison avec le user")
-
-              //On lie ce module a l'utilisateur
-              linkModule2User(
-                user,
-                module,
-                moduleName,
-                modulePlace,
-                function(res) {
-                  if (res == null)
-                    callback("The module has been added with success!");
-                  else callback("Error while adding the module");
-                }
+              //Cas 2: module disponible
+              console.log(
+                "le module d'id: " +
+                  publicID +
+                  "n'est pas deja utilisé => liaison avec le user"
               );
+
+              //On associe ce module a l'utilisateur
+              linkModule2User(user, module, moduleName, modulePlace, function (
+                res
+              ) {
+                if (res == null)
+                  callback("The module has been added with success!");
+                else callback("Error while adding the module");
+              });
             }
           });
         }
       });
     } else {
-      console.log("le module d'id: "+publicID + "n'existe pas")
-
-      // ce module n'existe pas, ressayez
+      //Les IDs ne matchent pas => le module correspondant n'existe pas
       callback("This module doesn't exist. Try again.");
     }
   });
 };
 
+//Vérification qu'un module match avec les IDs reçus
 function moduleExists(publicID, privateID, callback) {
-  modules.findOne({ publicID: publicID, privateID: privateID }, function(
+  modules.findOne({ publicID: publicID, privateID: privateID }, function (
     err,
     module
   ) {
@@ -99,14 +107,17 @@ function moduleExists(publicID, privateID, callback) {
   });
 }
 
+//Vérifie si l'utilisateur a déjà ajouté ce module
 function userOwnsThisModule(user, module, callback) {
   callback(user.modules.includes(module._id));
 }
 
+//Vérifie si le module est déjà associé à un utilisateur
 function isModuleUsed(module, callback) {
   callback(module.used);
 }
 
+//Associe le module à l'utilisateur
 function linkModule2User(user, module, moduleName, modulePlace, callback) {
   modules
     .updateOne(
@@ -116,20 +127,204 @@ function linkModule2User(user, module, moduleName, modulePlace, callback) {
           name: moduleName,
           place: modulePlace,
           used: true,
-          user: user._id
-        }
+          user: user._id,
+        },
       }
     )
-    .then(obj => {
+    .then((obj) => {
       users.updateOne(
         { email: user.email },
         { $push: { modules: module._id } },
-        function(err) {
+        function (err) {
           callback(err);
         }
       );
-      // .then(obj => {
-      //   callback(true);
-      // });
     });
 }
+
+//Verification
+module.exports.register = function (email, password, callback) {
+  //Vérification du format de l'email
+  var emailVerif = validator.validate(email);
+
+  if (emailVerif) {
+    //Le format de l'email est correct
+    users.find(
+      {
+        email: email,
+      },
+      function (err, user) {
+        if (user.length != 0) {
+          //Cas 1: cette adresse email est déjà utilisée
+          callback(409, "An user with that username already exists");
+        } else {
+          //Cas 2: cette adresse email n'est pas déjà utilisée => création de l'utilisateur
+          //Le password est encrypté
+          encryptPwd(password, function (encPassword) {
+            createUser(email, encPassword, function (answer) {
+              callback(201, answer);
+            });
+          });
+        }
+      }
+    );
+  } else {
+    //Mauvais format d'email
+    callback(409, "Bad email format");
+  }
+};
+
+//Inscription d'un utilisateur
+createUser = function (email, encPassword, callback) {
+  var newUser = new users({ email: email, pwd: encPassword });
+  newUser.save(function (err, user) {
+    if (err) {
+      return handleError(err);
+    }
+    callback("User well created!");
+  });
+};
+
+//Vérification et connexion de l'utilisateur (renvoie un JWT)
+module.exports.logUser = function (email, password, callback) {
+  //Le password est encrypté
+  encryptPwd(password, function (encPassword) {
+    //Recherche d'un utilisateur qui match l'email et le password encrypté
+    users.find(
+      //TODO: utiliser findOne?
+      {
+        email: email,
+        pwd: encPassword,
+      },
+      function (err, user) {
+        if (user.length != 0) {
+          //L'utilisateur existe bien
+
+          var payload = {
+            email: email,
+          };
+
+          //Génération du JWT (JSON Web Token)
+          var token = jwt.sign(payload, KEY, {
+            algorithm: "HS256",
+            expiresIn: "15d",
+          });
+
+          callback(200, token);
+        } else {
+          callback(401, "There's no user matching that");
+        }
+      }
+    );
+  });
+};
+
+//Mise à jour du nom du module d'id reçu en paramètre
+module.exports.updateModuleName = function (id, newName, callback) {
+  modules
+    .updateOne(
+      { _id: id },
+      {
+        $set: {
+          name: newName,
+        },
+      }
+    )
+    .then((obj) => {
+      callback(200, "ok");
+    });
+};
+
+//Mise à jour du nom du capteur d'id reçu en paramètre
+module.exports.updateSensorName = function (id, newName, callback) {
+  console.log(id);
+  console.log(newName);
+  sensors
+    .updateOne(
+      { _id: id },
+      {
+        $set: {
+          name: newName,
+        },
+      }
+    )
+    .then((obj) => {
+      callback(200, "ok");
+    });
+};
+
+//Mise à jour de l'état de l'actionneur d'id recu en paramètre
+//avec la valeur value reçue en paramètre
+module.exports.setActuatorState = function (id, value, callback) {
+  actuators
+    .updateOne(
+      { _id: id },
+      {
+        $set: {
+          state: value,
+        },
+      }
+    )
+    .then((obj) => {
+      callback(200, "Success");
+    });
+};
+
+//Mise à jour du mode automatique de l'actionneur d'id recu en paramètre
+//avec la valeur value reçue en paramètre
+module.exports.setActuatorAutomaticMode = function (id, value, callback) {
+  actuators
+    .updateOne(
+      { _id: id },
+      {
+        $set: {
+          automaticMode: value,
+        },
+      }
+    )
+    .then((obj) => {
+      callback(200, "Success");
+    });
+};
+
+module.exports.getModules = function (email, callback) {
+  var o = {}; // empty Object
+  o = []; // empty Array, which you can push() values into
+  var ok = true;
+  users
+    .findOne({ email: email }, function (err, user) {
+      //renvoie le user trouvé
+      if (user.modules.length == 0) {
+        console.log();
+        callback(200, JSON.stringify(o));
+        ok = false;
+      }
+    })
+    .populate({
+      //Remplace l'ObjectId du champ "modules" de user par l'objet correpsondant
+      path: "modules",
+      model: "modules",
+      //Remplace l'ObjectId du champ "sensors" du module peuplé précédemment par l'objet correpsondant
+      populate: [
+        {
+          path: "sensors",
+          model: "sensors",
+          populate: {
+            path: "sensorData.data",
+            model: "datas",
+            options: { limit: 0 },
+          },
+        },
+        {
+          path: "actuators",
+          model: "actuators",
+        },
+      ],
+    })
+    .exec(function (err, user) {
+      if (err) return handleError(err);
+      if (ok) {
+        callback(200, user.modules);
+      }
+    });
+};

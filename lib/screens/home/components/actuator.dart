@@ -1,4 +1,5 @@
 import 'package:cult_connect/components/constants.dart';
+import 'package:cult_connect/screens/home/actuator_details_page.dart';
 import 'package:cult_connect/screens/home/components/data.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert'; // show json, base64, ascii;
@@ -12,12 +13,14 @@ const SERVER_IP = 'http://192.168.0.24:8081';
 class Actuator {
   final String id;
   final String name;
-  final bool state;
+  bool state;
   final double value;
   final DateTime startTime;
   final DateTime stopTime;
-  final bool automaticMode;
-  bool isSwitched;
+  bool automaticMode;
+  bool stateIsSwitched;
+  bool automaticModeIsSwitched;
+  Switch stateSwitch;
 
   Actuator(
       {this.id,
@@ -27,7 +30,8 @@ class Actuator {
       this.startTime,
       this.stopTime,
       this.automaticMode,
-      this.isSwitched});
+      this.stateIsSwitched,
+      this.automaticModeIsSwitched});
 
   factory Actuator.fromJson(Map<String, dynamic> json) {
     print(json['startTime']);
@@ -42,33 +46,35 @@ class Actuator {
       startTime: startTime,
       stopTime: stopTime,
       automaticMode: json['automaticMode'],
-      isSwitched: json['state'],
+      stateIsSwitched: json['state'],
+      automaticModeIsSwitched: json['automaticMode'],
     );
   }
 
-  Future<String> toggleOnServer(value) async {
-    var response = await http.post(SERVER_IP + '/api/user/setActuator',
+  Future<String> toggleState(value) async {
+    var response = await http.post(SERVER_IP + '/api/user/setActuatorState',
         body: {"actuatorId": id, "value": value.toString()},
         headers: {"Authorization": jwt});
+    state = value;
+    stateIsSwitched = value;
     return response.body;
   }
 
-  void pushActuatorDetails(BuildContext context) {
+  Future<String> toggleAutomaticMode(value) async {
+    var response = await http.post(
+        SERVER_IP + '/api/user/setActuatorAutomaticMode',
+        body: {"actuatorId": id, "value": value.toString()},
+        headers: {"Authorization": jwt});
+    automaticMode = value;
+    automaticModeIsSwitched = value;
+    return response.body;
+  }
+
+  void pushActuatorDetails(BuildContext context, Switch stateSwitch) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          return Scaffold(
-              // Add 6 lines from here...
-              appBar: AppBar(
-                title: Text(name),
-              ),
-              body: Column(children: [
-                Flexible(
-                  child: ListView(children: [
-
-                  ]),
-                ),
-              ]));
+          return new ActuatorDetailsPage(this, stateSwitch);
         },
       ),
     );

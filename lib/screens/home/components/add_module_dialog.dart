@@ -10,14 +10,18 @@ class AddModuleDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Column(mainAxisSize: MainAxisSize.min, children: [
+      title: Column(children: [
         Text('Add a module'),
         Text('IDs are written on it',
             style: TextStyle(
               fontSize: 15,
             )),
       ]),
-      content: AddModuleForm(jwt, payload),
+      content: Column(mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          AddModuleForm(jwt, payload),
+        ],
+      ),
     );
   }
 }

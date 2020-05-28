@@ -13,7 +13,7 @@ final storage = FlutterSecureStorage();
 
 Future<String> fetchConnectionIdentifiers(String email, String pwd) async {
   final response =
-      await http.post(SERVER_IP + '/login', body: {"email": email, "pwd": pwd});
+      await http.post(SERVER_IP + '/api/login', body: {"email": email, "pwd": pwd});
   print(response.body);
   if (response.statusCode == 200) return response.body;
 
