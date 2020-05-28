@@ -137,8 +137,8 @@ app.post("/api/user/setActuatorAutomaticMode", function (req, res) {
 //Route pour mise à jour du nom de l'objet (capteur ou module) d'id reçu en paramètre
 //Si req.body.isSensor = true => c'est un nom de capteur à mettre à jour
 //Sinon c'est celui d'un module
-app.post("/api/user/updateModuleSensorName", function (req, res) {
-  console.log("new request: /api/user/setActuatorAutomaticMode");
+app.post("/api/user/updateModuleName", function (req, res) {
+  console.log("new request: /api/user/updateModuleName");
 
   try {
     //Vérification du JWT (JSON Web Token)
@@ -150,19 +150,11 @@ app.post("/api/user/updateModuleSensorName", function (req, res) {
         if (user != null) {
           var id = req.body.id;
           var newName = req.body.newName;
-          var isSensor = JSON.parse(req.body.isSensor);
 
-          if (isSensor) {
-            console.log("module");
-            mongo.updateSensorName(id, newName, function (code, answer) {
-              res.status(code).send(answer);
-            });
-          } else {
-            console.log("sensor");
-            mongo.updateModuleName(id, newName, function (code, answer) {
-              res.status(code).send(answer);
-            });
-          }
+          console.log("module");
+          mongo.updateSensorName(id, newName, function (code, answer) {
+            res.status(code).send(answer);
+          });
         }
       });
     }
@@ -182,9 +174,9 @@ app.get("/api/user/getModules", function (req, res) {
       //Récupération de l'utilisateur associé au JWT
       mongo.userExists(email, function (user) {
         if (user != null) {
-          mongo.getModules(email, function(code, answer){
+          mongo.getModules(email, function (code, answer) {
             res.status(code).send(answer);
-          })
+          });
         }
       });
     }
