@@ -1,10 +1,10 @@
-import 'package:cult_connect/screens/home/components/updateNameDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'actuator.dart';
 import 'data.dart';
 import 'module.dart';
+import 'moduleSettingsDialog.dart';
 import 'sensor.dart';
 import 'package:intl/intl.dart';
 
@@ -34,19 +34,18 @@ class _ModulesListState extends State<ModulesList> {
             return new ExpansionTile(
               title: Row(
                 children: <Widget>[
-                  new Text(widget.modules[index].name),
+                  new Text(widget.modules[index].name +
+                      " - " +
+                      widget.modules[index].place),
                   IconButton(
                     onPressed: () {
                       print("clicked!");
-                      displayUpdateNameDialog(
-                          context,
-                          "Change \"" + widget.modules[index].name + "\" name",
-                          widget.modules[index],
-                          null);
+                      displayModuleSettingsDialog(
+                          context, widget.modules[index]);
                     },
                     icon: Icon(Icons.settings),
                     color: Colors.grey,
-                  )
+                  ),
                 ],
               ),
               children: <Widget>[

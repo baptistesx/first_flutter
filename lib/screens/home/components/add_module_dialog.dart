@@ -17,10 +17,12 @@ class AddModuleDialog extends StatelessWidget {
               fontSize: 15,
             )),
       ]),
-      content: Column(mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          AddModuleForm(jwt, payload),
-        ],
+      content: SingleChildScrollView(
+              child: Column(mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            AddModuleForm(jwt, payload),
+          ],
+        ),
       ),
     );
   }

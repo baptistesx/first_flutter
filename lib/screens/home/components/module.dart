@@ -36,7 +36,7 @@ List<Module> parseModules(String responseBody) {
 class Module {
   final String id;
   String name;
-  final String place;
+  String place;
   final List<Sensor> sensors;
   final List<Actuator> actuators;
 

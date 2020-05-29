@@ -8,11 +8,11 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import 'components/data.dart';
+import 'components/moduleSettingsDialog.dart';
 import 'components/sensor.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
 
-import 'components/updateNameDialog.dart';
 
 class SensorDetailsPage extends StatefulWidget {
   Sensor sensor;
@@ -151,11 +151,11 @@ class _SensorDetailsPage extends State<SensorDetailsPage> {
               IconButton(
                 onPressed: () {
                   print("clicked!");
-                  displayUpdateNameDialog(
-                          context,
-                          "Change \"" +sensor.name + "\" name",
-                          null,
-                          sensor);
+                  // displayUpdateNameDialog(
+                  //         context,
+                  //         "Change \"" +sensor.name + "\" name",
+                  //         null,
+                  //         sensor);
                 },
                 icon: Icon(Icons.settings),
                 color: Colors.black,
