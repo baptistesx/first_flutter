@@ -14,14 +14,12 @@ const SERVER_IP = 'http://192.168.0.24:8081';
 Object getModules(http.Client client, jwt) async {
   final response = await client
       .get(SERVER_IP + '/api/user/getModules', headers: {"Authorization": jwt});
-  print(response.body);
   return (response.body);
 }
 
 Future<List<Module>> fetchModules(http.Client client, jwt) async {
   final response = await client
       .get(SERVER_IP + '/api/user/getModules', headers: {"Authorization": jwt});
-  print(response.body);
   // Use the compute function to run parseModules in a separate isolate.
   return compute(parseModules, response.body);
 }
@@ -48,7 +46,6 @@ class Module {
       this.actuators}); //, this.capteurs});
 
   factory Module.fromJson(Map<String, dynamic> json) {
-    print("id module : ${json['_id'] }");
     return Module(
       id: json['_id'] as String,
       name: json['name'] as String,

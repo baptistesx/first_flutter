@@ -252,6 +252,22 @@ module.exports.updateModulePlace = function (id, newPlace, callback) {
 };
 
 //Mise à jour du nom du capteur d'id reçu en paramètre
+module.exports.updateSensor = function (id, newName, callback) {
+  sensors
+    .updateOne(
+      { _id: id },
+      {
+        $set: {
+          name: newName,
+        },
+      }
+    )
+    .then((obj) => {
+      callback(200, "ok");
+    });
+};
+
+//Mise à jour du nom du capteur d'id reçu en paramètre
 module.exports.updateSensorName = function (id, newName, callback) {
   console.log(id);
   console.log(newName);

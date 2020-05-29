@@ -134,9 +134,7 @@ app.post("/api/user/setActuatorAutomaticMode", function (req, res) {
   }
 });
 
-//Route pour mise à jour du nom de l'objet (capteur ou module) d'id reçu en paramètre
-//Si req.body.isSensor = true => c'est un nom de capteur à mettre à jour
-//Sinon c'est celui d'un module
+//Route pour mise à jour du module d'id reçu en paramètre
 app.post("/api/user/updateModule", function (req, res) {
   console.log("new request: /api/user/updateModule");
 
@@ -152,7 +150,7 @@ app.post("/api/user/updateModule", function (req, res) {
           var newName = req.body.newName;
           var newPlace = req.body.newPlace;
           console.log(newName);
-          console.log(newPlace)
+          console.log(newPlace);
           var response = "ok";
           var codeResponse = 200;
           if (newName != "") {
@@ -169,6 +167,32 @@ app.post("/api/user/updateModule", function (req, res) {
           }
         }
         res.status(codeResponse).send(response);
+      });
+    }
+  } catch {
+    res.status(401).send("Bad Token");
+  }
+});
+
+//Route pour mise à jour d'un capteur d'id reçu en paramètre
+app.post("/api/user/updateSensor", function (req, res) {
+  console.log("new request: /api/user/updateSensor");
+
+  try {
+    //Vérification du JWT (JSON Web Token)
+    var email = mongo.checkJWT(req.get("Authorization"), KEY);
+
+    if (email != null) {
+      //Récupération de l'utilisateur associé au JWT
+      mongo.userExists(email, function (user) {
+        if (user != null) {
+          var id = req.body.id;
+          var newName = req.body.newName;
+          console.log(newName);
+          mongo.updateSensor(id, newName, function (code, answer) {
+            res.status(code).send(answer);
+          });
+        }
       });
     }
   } catch {
@@ -193,8 +217,7 @@ app.post("/api/user/removeModule", function (req, res) {
           mongo.freeModule(email, id, function (code, answer) {
             res.status(code).send(answer);
           });
-        }
-        else{
+        } else {
           res.status(401).send("User not found");
         }
       });

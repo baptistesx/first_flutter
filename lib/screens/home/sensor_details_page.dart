@@ -13,6 +13,8 @@ import 'components/sensor.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
 
+import 'components/sensorSettingsDialog.dart';
+
 
 class SensorDetailsPage extends StatefulWidget {
   Sensor sensor;
@@ -150,13 +152,10 @@ class _SensorDetailsPage extends State<SensorDetailsPage> {
                   ")"),
               IconButton(
                 onPressed: () {
-                  print("clicked!");
-                  // displayUpdateNameDialog(
-                  //         context,
-                  //         "Change \"" +sensor.name + "\" name",
-                  //         null,
-                  //         sensor);
-                },
+                      print("clicked!");
+                      displaySensorSettingsDialog(
+                          context, sensor);
+                    },
                 icon: Icon(Icons.settings),
                 color: Colors.black,
               )

@@ -34,8 +34,6 @@ class Actuator {
       this.automaticModeIsSwitched});
 
   factory Actuator.fromJson(Map<String, dynamic> json) {
-    print(json['startTime']);
-    print(json['stopTime']);
     DateTime startTime = DateTime.parse(json['startTime']);
     DateTime stopTime = DateTime.parse(json['stopTime']);
     return Actuator(
