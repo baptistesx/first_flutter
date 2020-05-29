@@ -235,6 +235,22 @@ module.exports.updateModuleName = function (id, newName, callback) {
     });
 };
 
+//Mise à jour de la place du module d'id reçu en paramètre
+module.exports.updateModulePlace = function (id, newPlace, callback) {
+  modules
+    .updateOne(
+      { _id: id },
+      {
+        $set: {
+          place: newPlace,
+        },
+      }
+    )
+    .then((obj) => {
+      callback(200, "ok");
+    });
+};
+
 //Mise à jour du nom du capteur d'id reçu en paramètre
 module.exports.updateSensorName = function (id, newName, callback) {
   console.log(id);
@@ -327,4 +343,29 @@ module.exports.getModules = function (email, callback) {
         callback(200, user.modules);
       }
     });
+};
+
+//Réinitialise le module et le désassocie du user
+module.exports.freeModule = function (email, id, callback) {
+  console.log("remove " + id);
+  modules
+    .updateOne(
+      { _id: id },
+      {
+        $set: {
+          name: "ModuleN",
+          place: "PlaceN",
+          used: false,
+          user: undefined,
+        },
+      }
+    )
+    .then((obj) => {
+      users.findOne({ email: email }, function(err, user){
+        user.modules.remove(id);
+        user.save();
+      });
+      callback(200, "Success");
+    });
+  callback(200, "ok");
 };

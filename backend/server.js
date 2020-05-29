@@ -137,8 +137,8 @@ app.post("/api/user/setActuatorAutomaticMode", function (req, res) {
 //Route pour mise à jour du nom de l'objet (capteur ou module) d'id reçu en paramètre
 //Si req.body.isSensor = true => c'est un nom de capteur à mettre à jour
 //Sinon c'est celui d'un module
-app.post("/api/user/updateModuleName", function (req, res) {
-  console.log("new request: /api/user/updateModuleName");
+app.post("/api/user/updateModule", function (req, res) {
+  console.log("new request: /api/user/updateModule");
 
   try {
     //Vérification du JWT (JSON Web Token)
@@ -150,11 +150,52 @@ app.post("/api/user/updateModuleName", function (req, res) {
         if (user != null) {
           var id = req.body.id;
           var newName = req.body.newName;
+          var newPlace = req.body.newPlace;
+          console.log(newName);
+          console.log(newPlace)
+          var response = "ok";
+          var codeResponse = 200;
+          if (newName != "") {
+            mongo.updateModuleName(id, newName, function (code, answer) {
+              codeResponse = code;
+              response = answer;
+            });
+          }
+          if (newPlace != "") {
+            mongo.updateModulePlace(id, newPlace, function (code, answer) {
+              codeResponse = code;
+              response = answer;
+            });
+          }
+        }
+        res.status(codeResponse).send(response);
+      });
+    }
+  } catch {
+    res.status(401).send("Bad Token");
+  }
+});
 
-          console.log("module");
-          mongo.updateSensorName(id, newName, function (code, answer) {
+//Utilisateur "supprime" un module de sa liste => libérer module mais pas supprimer
+app.post("/api/user/removeModule", function (req, res) {
+  console.log("new request: /api/user/removeModule");
+
+  try {
+    //Vérification du JWT (JSON Web Token)
+    var email = mongo.checkJWT(req.get("Authorization"), KEY);
+
+    if (email != null) {
+      //Récupération de l'utilisateur associé au JWT
+      mongo.userExists(email, function (user) {
+        if (user != null) {
+          var id = req.body.id;
+
+          mongo.freeModule(email, id, function (code, answer) {
             res.status(code).send(answer);
           });
+        }
+        else{
+          res.status(401).send("User not found");
         }
       });
     }
