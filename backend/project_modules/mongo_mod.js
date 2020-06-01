@@ -377,11 +377,31 @@ module.exports.freeModule = function (email, id, callback) {
       }
     )
     .then((obj) => {
-      users.findOne({ email: email }, function(err, user){
+      users.findOne({ email: email }, function (err, user) {
         user.modules.remove(id);
         user.save();
       });
       callback(200, "Success");
     });
-  callback(200, "ok");
+};
+
+module.exports.updateSensorDataAutomaticMode = function (
+  sensorId,
+  sensorDataIndexValue,
+  newValue,
+  callback
+) {
+  console.log(sensorId);
+  console.log(sensorDataIndexValue);
+  console.log(newValue);
+
+  sensors
+    .findOne(
+      { _id: sensorId },
+      function (err, sensor) {
+        sensor.sensorData[sensorDataIndexValue].automaticMode = newValue;
+        sensor.save();
+        callback(200, "Success");
+      }
+    )
 };

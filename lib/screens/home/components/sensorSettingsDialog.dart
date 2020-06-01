@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import '../home_page.dart';
 import 'sensor.dart';
+const SERVER_IP = 'http://192.168.0.24:8081';
 
 Future<String> updateSensor(String id, String newName) async {
   final response = await http.post(SERVER_IP + '/api/user/updateSensor',

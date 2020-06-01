@@ -15,7 +15,6 @@ import 'package:intl/intl.dart';
 
 import 'components/sensorSettingsDialog.dart';
 
-
 class SensorDetailsPage extends StatefulWidget {
   Sensor sensor;
   int sensorDataIndex;
@@ -152,10 +151,9 @@ class _SensorDetailsPage extends State<SensorDetailsPage> {
                   ")"),
               IconButton(
                 onPressed: () {
-                      print("clicked!");
-                      displaySensorSettingsDialog(
-                          context, sensor);
-                    },
+                  print("clicked!");
+                  displaySensorSettingsDialog(context, sensor);
+                },
                 icon: Icon(Icons.settings),
                 color: Colors.black,
               )
@@ -170,10 +168,10 @@ class _SensorDetailsPage extends State<SensorDetailsPage> {
                 children: <Widget>[
                   Text("Automatic mode: "),
                   Switch(
-                    value: true,
+                    value: sensor.sensorData[sensorDataIndex].automaticMode,
                     onChanged: (value) {
                       setState(() {
-                        // actuator.toggleState(value);
+                        sensor.sensorData[sensorDataIndex].updateSensorDataAutomaticMode(sensor.id, sensorDataIndex, value);
                       });
                     },
                     activeTrackColor: Colors.lightGreenAccent,

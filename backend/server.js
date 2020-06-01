@@ -134,6 +134,35 @@ app.post("/api/user/setActuatorAutomaticMode", function (req, res) {
   }
 });
 
+//Mise à jour du mode automatic de l'actionneur
+app.post("/api/user/updateSensorAutomaticMode", function (req, res) {
+  console.log("new request: /api/user/updateSensorAutomaticMode");
+
+  try {
+    //Vérification du JWT (JSON Web Token)
+    var email = mongo.checkJWT(req.get("Authorization"), KEY);
+
+    if (email != null) {
+      //Récupération de l'utilisateur associé au JWT
+      mongo.userExists(email, function (user) {
+        if (user != null) {
+          var sensorId = req.body.sensorId;
+          var sensorDataIndex = req.body.sensorDataIndex;
+          var newValue = req.body.newValue;
+
+          //TODO: Faire réelle requete au module et changer etat en bdd que si validé par module
+
+          mongo.updateSensorDataAutomaticMode(sensorId, sensorDataIndex, newValue, function (code, answer) {
+            res.status(code).send(answer);
+          });
+        }
+      });
+    }
+  } catch {
+    res.status(401).send("Bad Token");
+  }
+});
+
 //Route pour mise à jour du module d'id reçu en paramètre
 app.post("/api/user/updateModule", function (req, res) {
   console.log("new request: /api/user/updateModule");
@@ -239,6 +268,7 @@ app.get("/api/user/getModules", function (req, res) {
       mongo.userExists(email, function (user) {
         if (user != null) {
           mongo.getModules(email, function (code, answer) {
+            console.log("%j", answer);
             res.status(code).send(answer);
           });
         }

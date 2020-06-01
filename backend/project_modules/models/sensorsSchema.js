@@ -9,6 +9,7 @@ const sensorsSchema = new mongoose.Schema({
       limitMin: Number,
       limitMax: Number,
       setupValue: Number,
+      automaticMode: Boolean,
       data: { type: ObjectId, ref: "datas" } },
   ],
   module: { type: ObjectId, ref: "modules" },
