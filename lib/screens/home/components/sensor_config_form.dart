@@ -68,7 +68,23 @@ class _SensorConfigForm extends State<SensorConfigForm> {
     return null;
   }
 
-  void resetSlidersValues()
+  void resetSlidersValues() {
+    print("reset sliders!");
+    sensor.sensorData[sensorDataIndex].temp_nominalValue =
+        sensor.sensorData[sensorDataIndex].nominalValue;
+
+    sensor.sensorData[sensorDataIndex].temp_acceptableMin =
+        sensor.sensorData[sensorDataIndex].acceptableMin;
+
+    sensor.sensorData[sensorDataIndex].temp_acceptableMax =
+        sensor.sensorData[sensorDataIndex].acceptableMax;
+
+    sensor.sensorData[sensorDataIndex].temp_criticalMin =
+        sensor.sensorData[sensorDataIndex].criticalMin;
+
+    sensor.sensorData[sensorDataIndex].temp_criticalMax =
+        sensor.sensorData[sensorDataIndex].criticalMax;
+  }
 
   @override
   Widget build(BuildContext context) {
