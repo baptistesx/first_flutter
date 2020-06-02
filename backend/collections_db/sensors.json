@@ -1,0 +1,74 @@
+[{
+  "_id": {
+    "$oid": "5e81197a68819b45fce01000"
+  },
+  "name": "Sensor",
+  "sensorData": [
+    {
+      "dataType": "temperature",
+      "unit": "°C",
+      "acceptableMin": 50.5,
+      "acceptableMax": 89.5,
+      "criticalMin": 12,
+      "criticalMax": 65,
+      "nominalValue": 45.5,
+      "limitMin": 0,
+      "limitMax": 100,
+      "automaticMode": true,
+      "data": {
+        "$oid": "5e826a32b50e94197c19442c"
+      }
+    },
+    {
+      "dataType": "humidity",
+      "unit": "%",
+      "acceptableMin": 0,
+      "acceptableMax": 100,
+      "criticalMin": 0,
+      "criticalMax": 100,
+      "nominalValue": 40,
+      "limitMin": 0,
+      "limitMax": 100,
+      "automaticMode": false,
+      "data": {
+        "$oid": "5e826ad7b50e94197c19442f"
+      }
+    }
+  ],
+  "module": {
+    "$oid": "5e7a80125d33fe0d041ff8cb"
+  }
+},{
+  "_id": {
+    "$oid": "5e811ab968819b45fce01002"
+  },
+  "name": "sensor2",
+  "sensorData": [
+    {
+      "dataType": "luminosity",
+      "unit": "lum",
+      "automaticMode": false,
+      "data": {
+        "$oid": "5ebac38b4f542737f82bd4e9"
+      }
+    }
+  ]
+},{
+  "_id": {
+    "$oid": "5e8858cf43322c38c4da3703"
+  },
+  "name": "sensor3",
+  "sensorData": [
+    {
+      "dataType": "temperature",
+      "unit": "°C",
+      "automaticMode": false,
+      "data": {
+        "$oid": "5ebac38b4f542737f82bd4e9"
+      }
+    }
+  ],
+  "module": {
+    "$oid": "5e7a88e55d33fe0d041ff8ce"
+  }
+}]
