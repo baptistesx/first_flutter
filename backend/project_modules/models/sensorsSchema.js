@@ -5,12 +5,19 @@ var Schema = mongoose.Schema,
 const sensorsSchema = new mongoose.Schema({
   name: String,
   sensorData: [
-    { dataType: String, unit: String, 
+    {
+      dataType: String,
+      unit: String,
+      acceptableMin: Number,
+      acceptableMax: Number,
+      criticalMin: Number,
+      criticalMax: Number,
+      nominalValue: Number,
       limitMin: Number,
       limitMax: Number,
-      setupValue: Number,
       automaticMode: Boolean,
-      data: { type: ObjectId, ref: "datas" } },
+      data: { type: ObjectId, ref: "datas" },
+    },
   ],
   module: { type: ObjectId, ref: "modules" },
 });

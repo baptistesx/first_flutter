@@ -171,7 +171,9 @@ class _SensorDetailsPage extends State<SensorDetailsPage> {
                     value: sensor.sensorData[sensorDataIndex].automaticMode,
                     onChanged: (value) {
                       setState(() {
-                        sensor.sensorData[sensorDataIndex].updateSensorDataAutomaticMode(sensor.id, sensorDataIndex, value);
+                        sensor.sensorData[sensorDataIndex]
+                            .updateSensorDataAutomaticMode(
+                                sensor.id, sensorDataIndex, value);
                       });
                     },
                     activeTrackColor: Colors.lightGreenAccent,
@@ -180,9 +182,12 @@ class _SensorDetailsPage extends State<SensorDetailsPage> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SensorConfigForm(),
+            Visibility(
+              visible: sensor.sensorData[sensorDataIndex].automaticMode,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SensorConfigForm(sensor, sensorDataIndex),
+              ),
             ),
             chartWidget
           ]),

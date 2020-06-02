@@ -152,9 +152,56 @@ app.post("/api/user/updateSensorAutomaticMode", function (req, res) {
 
           //TODO: Faire réelle requete au module et changer etat en bdd que si validé par module
 
-          mongo.updateSensorDataAutomaticMode(sensorId, sensorDataIndex, newValue, function (code, answer) {
-            res.status(code).send(answer);
-          });
+          mongo.updateSensorDataAutomaticMode(
+            sensorId,
+            sensorDataIndex,
+            newValue,
+            function (code, answer) {
+              res.status(code).send(answer);
+            }
+          );
+        }
+      });
+    }
+  } catch {
+    res.status(401).send("Bad Token");
+  }
+});
+
+//Mise à jour de la config d'un sensorData
+app.post("/api/user/updateSensorDataConfig", function (req, res) {
+  console.log("new request: /api/user/updateSensorDataConfig");
+
+  try {
+    //Vérification du JWT (JSON Web Token)
+    var email = mongo.checkJWT(req.get("Authorization"), KEY);
+
+    if (email != null) {
+      //Récupération de l'utilisateur associé au JWT
+      mongo.userExists(email, function (user) {
+        if (user != null) {
+          var sensorId = req.body.sensorId;
+          var sensorDataIndex = req.body.sensorDataIndex;
+          var newNominalValue = req.body.newNominalValue;
+          var newAcceptableMin = req.body.newAcceptableMin;
+          var newAcceptableMax = req.body.newAcceptableMax;
+          var newCriticalMin = req.body.newCriticalMin;
+          var newCriticalMax = req.body.newCritiacalMax;
+
+          //TODO: Faire réelle requete au module et changer etat en bdd que si validé par module
+
+          mongo.updateSensorDataConfig(
+            sensorId,
+            sensorDataIndex,
+            newNominalValue,
+            newAcceptableMin,
+            newAcceptableMax,
+            newCriticalMin,
+            newCriticalMax,
+            function (code, answer) {
+              res.status(code).send(answer);
+            }
+          );
         }
       });
     }

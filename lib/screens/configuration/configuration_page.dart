@@ -269,7 +269,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                                         Text('Température nominale (°C)'),
                                         Row(children: [
                                           Icon(Icons.wb_sunny),
-                                          TemperatureNominaleSlider()
+                                          // TemperatureNominaleSlider()
                                         ]),
                                       ],
                                     ),
@@ -278,7 +278,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                                         Text('Température acceptable (°C)'),
                                         Row(children: [
                                           Icon(Icons.wb_sunny),
-                                          TemperatureOKSlider()
+                                          // TemperatureOKSlider()
                                         ]),
                                       ],
                                     ),
@@ -287,7 +287,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                                         Text('Min (°C, alerte)'),
                                         Row(children: [
                                           Icon(Icons.wb_sunny),
-                                          TemperatureMinSlider()
+                                          // TemperatureMinSlider()
                                         ]),
                                       ],
                                     ),
@@ -296,7 +296,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                                         Text('Max (°C, alerte)'),
                                         Row(children: [
                                           Icon(Icons.wb_sunny),
-                                          TemperatureMaxSlider()
+                                          // TemperatureMaxSlider()
                                         ]),
                                       ],
                                     ),

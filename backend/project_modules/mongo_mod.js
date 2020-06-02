@@ -395,13 +395,43 @@ module.exports.updateSensorDataAutomaticMode = function (
   console.log(sensorDataIndexValue);
   console.log(newValue);
 
-  sensors
-    .findOne(
-      { _id: sensorId },
-      function (err, sensor) {
-        sensor.sensorData[sensorDataIndexValue].automaticMode = newValue;
-        sensor.save();
-        callback(200, "Success");
-      }
-    )
+  sensors.findOne({ _id: sensorId }, function (err, sensor) {
+    sensor.sensorData[sensorDataIndexValue].automaticMode = newValue;
+    sensor.save();
+    callback(200, "Success");
+  });
+};
+
+module.exports.updateSensorDataConfig = function (
+  sensorId,
+  sensorDataIndex,
+  newNominalValue,
+  newAcceptableMin,
+  newAcceptableMax,
+  newCriticalMin,
+  newCriticalMax,
+  callback
+) {
+  console.log(sensorId);
+  console.log(sensorDataIndex);
+  console.log(newNominalValue);
+  console.log(newAcceptableMin);
+  console.log(newAcceptableMax);
+  console.log(newCriticalMin);
+  console.log(newCriticalMax);
+
+  sensors.findOne({ _id: sensorId }, function (err, sensor) {
+    sensor.sensorData[sensorDataIndex].nominalValue = newNominalValue;
+
+    sensor.sensorData[sensorDataIndex].acceptableMin = newAcceptableMin;
+
+    sensor.sensorData[sensorDataIndex].acceptableMax = newAcceptableMax;
+
+    sensor.sensorData[sensorDataIndex].criticalMin = newCriticalMin;
+
+    sensor.sensorData[sensorDataIndex].criticalMax = newCriticalMax;
+
+    sensor.save();
+    callback(200, "Success");
+  });
 };
