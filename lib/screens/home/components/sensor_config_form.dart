@@ -68,6 +68,8 @@ class _SensorConfigForm extends State<SensorConfigForm> {
     return null;
   }
 
+  void resetSlidersValues()
+
   @override
   Widget build(BuildContext context) {
     print("bbb:" + sensor.sensorData[sensorDataIndex].criticalMin.toString());
@@ -233,7 +235,7 @@ class _SensorConfigForm extends State<SensorConfigForm> {
                     child: RaisedButton(
                       child: Text("Save"),
                       color: Colors.green,
-                      onPressed: () {
+                      onPressed: () async {
                         print("sensor id: +${sensor.id}");
                         print("nominale: ${sensorDataI.nominalValue}");
                         print("acceptableMin: ${sensorDataI.acceptableMin}");
@@ -249,7 +251,31 @@ class _SensorConfigForm extends State<SensorConfigForm> {
                             "acceptableMax: ${sensorDataI.temp_acceptableMax}");
                         print("criticalMin: ${sensorDataI.temp_criticalMin}");
                         print("criticalMax: ${sensorDataI.temp_criticalMax}");
-                        updateSensorDataConfig(sensor, sensorDataIndex);
+
+                        if (sensorDataI.temp_nominalValue <=
+                                sensorDataI.temp_acceptableMin ||
+                            sensorDataI.temp_nominalValue >=
+                                sensorDataI.temp_acceptableMax) {
+                          displayDialog(context, "ERROR",
+                              "The nominal value must inside the acceptable range!");
+                        } else if (sensorDataI.temp_acceptableMin <=
+                                sensorDataI.temp_criticalMin ||
+                            sensorDataI.temp_acceptableMin >=
+                                sensorDataI.temp_criticalMax) {
+                          displayDialog(context, "ERROR",
+                              "The acceptable minimal value must be set between the minimal critical value and the maximum one");
+                        } else if (sensorDataI.temp_acceptableMax <=
+                                sensorDataI.temp_criticalMin ||
+                            sensorDataI.temp_acceptableMax >=
+                                sensorDataI.temp_criticalMax) {
+                          displayDialog(context, "ERROR",
+                              "The acceptable maximal value must be set between the minimal critical value and the maximum one");
+                        } else {
+                          var res = await updateSensorDataConfig(
+                              sensor, sensorDataIndex);
+                          displayDialog(context, "RESULT", res);
+                        }
+
                         // if (_formKey.currentState.validate()) {
                         //   _formKey.currentState.save();
                         // }
@@ -260,6 +286,7 @@ class _SensorConfigForm extends State<SensorConfigForm> {
                     child: Text("Reset"),
                     color: Colors.blue,
                     onPressed: () {
+                      resetSlidersValues();
                       // print("sensor id: +${sensor.id}");
                       // print("nominale: ${temp_nominalValue}");
                       // print("acceptableMin: ${temp_acceptableMin}");
