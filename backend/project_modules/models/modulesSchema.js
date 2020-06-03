@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 var Schema = mongoose.Schema,
   ObjectId = Schema.ObjectId;
 
-const modulesSchema = new mongoose.Schema({
+const modulesSchema = new Schema({
   publicID: String,
   privateID: String,
   name: String,

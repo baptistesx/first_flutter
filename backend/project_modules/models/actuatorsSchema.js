@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 var Schema = mongoose.Schema,
   ObjectId = Schema.ObjectId;
 
-const actuatorsSchema = new mongoose.Schema({
+const actuatorsSchema = new Schema({
   name: String,
   module: { type: ObjectId, ref: "modules" },
   state: Boolean,

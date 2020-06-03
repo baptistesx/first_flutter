@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 var Schema = mongoose.Schema,
   ObjectId = Schema.ObjectId;
 
-const sensorsSchema = new mongoose.Schema({
+const sensorsSchema = new Schema({
   name: String,
   sensorData: [
     {

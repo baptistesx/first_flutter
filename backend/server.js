@@ -8,20 +8,13 @@ var app = express();
 var http = require("http");
 var bodyParser = require("body-parser");
 var mongo = require("./project_modules/mongo_mod");
-var users = require("./project_modules/models/userSchema").users;
-var modules = require("./project_modules/models/modulesSchema").modules;
-
-var sensors = require("./project_modules/models/sensorsSchema").sensors;
-var actuators = require("./project_modules/models/actuatorsSchema").actuators;
-var datas = require("./project_modules/models/dataSchema").datas;
+var controler = require("./project_modules/control_mod");
 
 const KEY = "m yincredibl y(!!1!11!)zpG6z2s8)Key'!";
 
-app.use(
-  bodyParser.urlencoded({
-    extended: false,
-  })
-);
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
 //Route pour inscription d'un utilisateur
 app.post("/api/signup", function (req, res) {
@@ -53,28 +46,22 @@ app.post("/api/user/addModule", function (req, res) {
 
   try {
     //Vérification du JWT (JSON Web Token)
-    var email = mongo.checkJWT(req.get("Authorization"), KEY);
+    //Vérifie si le token match bien avec l'email
+    var email = jwt.verify(req.get("Authorization"), KEY, {algorithm: "HS256"}).email;
 
-    if (email != null) {
-      //Récupération de l'utilisateur associé au JWT
-      mongo.userExists(email, function (user) {
-        if (user != null) {
-          //Ajout du module dans la liste des modules de l'utilisateur
-          mongo.addModule(
-            user,
-            req.body.name,
-            req.body.place,
-            req.body.publicID,
-            req.body.privateID,
-            function (answer) {
-              res.send(answer);
-            }
-          );
-        }
-      });
-    }
-  } catch {
-    res.status(401).send("Bad Token");
+    //Ajout du module dans la liste des modules de l'utilisateur
+    mongo.addModule(
+      email,
+      req.body.name,
+      req.body.place,
+      req.body.publicID,
+      req.body.privateID,
+      function (answer) {
+        res.send(answer);
+      }
+    );
+  } catch (error){
+    res.status(401).send(error.message);
   }
 });
 
@@ -88,7 +75,7 @@ app.post("/api/user/setActuatorState", function (req, res) {
 
     if (email != null) {
       //Récupération de l'utilisateur associé au JWT
-      mongo.userExists(email, function (user) {
+      controler.userExists(email, function (user) {
         if (user != null) {
           var id = req.body.actuatorId;
           var value = req.body.value;

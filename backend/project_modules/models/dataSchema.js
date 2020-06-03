@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 var Schema = mongoose.Schema,
   ObjectId = Schema.ObjectId;
-const dataSchema = new mongoose.Schema({
+  
+const dataSchema = new Schema({
   sensor: { type: ObjectId, ref: "sensors" },
   values: [{ date: Date, value: Number }],
 });
