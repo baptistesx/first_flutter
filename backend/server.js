@@ -9,6 +9,7 @@ var http = require("http");
 var bodyParser = require("body-parser");
 var mongo = require("./project_modules/mongo_mod");
 var controler = require("./project_modules/control_mod");
+var jwt = require("jsonwebtoken");
 
 const KEY = "m yincredibl y(!!1!11!)zpG6z2s8)Key'!";
 
@@ -47,7 +48,9 @@ app.post("/api/user/addModule", function (req, res) {
   try {
     //Vérification du JWT (JSON Web Token)
     //Vérifie si le token match bien avec l'email
-    var email = jwt.verify(req.get("Authorization"), KEY, {algorithm: "HS256"}).email;
+    var email = jwt.verify(req.get("Authorization"), KEY, {
+      algorithm: "HS256"
+    }).email;
 
     //Ajout du module dans la liste des modules de l'utilisateur
     mongo.addModule(
@@ -60,7 +63,8 @@ app.post("/api/user/addModule", function (req, res) {
         res.send(answer);
       }
     );
-  } catch (error){
+  } catch (error) {
+    console.log(error.message)
     res.status(401).send(error.message);
   }
 });
@@ -295,11 +299,12 @@ app.get("/api/user/getModules", function (req, res) {
 
   try {
     //Vérification du JWT (JSON Web Token)
-    var email = mongo.checkJWT(req.get("Authorization"), KEY);
-
+    var email = jwt.verify(req.get("Authorization"), KEY, {
+      algorithm: "HS256"
+    }).email;
     if (email != null) {
       //Récupération de l'utilisateur associé au JWT
-      mongo.userExists(email, function (user) {
+      controler.userExists(email, function (user) {
         if (user != null) {
           mongo.getModules(email, function (code, answer) {
             console.log("%j", answer);
@@ -308,7 +313,8 @@ app.get("/api/user/getModules", function (req, res) {
         }
       });
     }
-  } catch {
+  } catch (e){
+    console.log(e)
     res.status(401).send("Bad Token");
   }
 });
