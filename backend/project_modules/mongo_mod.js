@@ -43,60 +43,43 @@ module.exports.addModule = function (
   privateID,
   callback
 ) {
-  controler.userExists(email, function (user) {
+
+  controler.userExists(email, function (res, user) {
     //Vérification de l'existence du module (les deux ID doivent matcher)
-    controler.moduleExists(publicID, privateID, function (module) {
+    controler.moduleExists(res, publicID, privateID, function (res, module) {
       //On vérifie si l'utilisateur n'a pas déjà ajouté ce module
-      controler.userOwnsThisModule(user, module, function (res) {
+      controler.userOwnsThisModule(res, user, module, function (res) {
         //On vérifie si le module est associé à un autre utilisateur
-        controler.isModuleUsed(module, function (isUsed) {
+        controler.isModuleUsed(res, module, function (res) {
           //Cas 2: module disponible
           console.log(
-            "le module d'id: " +
+            "le module d'id: '" +
             publicID +
-            "n'est pas deja utilisé => liaison avec le user"
+            "' n'est pas deja utilisé => liaison avec le user"
           );
-
-          //On associe ce module a l'utilisateur
-          linkModule2User(user, module, moduleName, modulePlace, function (
-            res
-          ) {
-            if (res == null)
-              callback("The module has been added with success!");
-            else callback("Error while adding the module");
-          });
+          // S'il n'y a tjrs pas de message d'erreur
+          if (res == null) {
+            module.name = moduleName
+            module.place = modulePlace
+            module.used = true
+            module.user = user._id // liaison de l'utilisateur au module
+            user.modules.push(module._id) // liaison du module à l'utilisateur
+            module.save(function (err) {
+              if (err) return handleError(err);
+            })
+            user.save(function (err) {
+              if (err) return handleError(err);
+            })
+            callback("The module has been added with success!");
+          } else {
+            callback("Error while adding the module : " + res);
+          }
         });
       });
     });
   })
 
 };
-
-//Associe le module à l'utilisateur
-function linkModule2User(user, module, moduleName, modulePlace, callback) {
-  modules
-    .updateOne({ _id: module._id }, {
-      $set: {
-        name: moduleName,
-        place: modulePlace,
-        used: true,
-        user: user._id,
-      },
-    })
-    .then((obj) => {
-      users.updateOne({
-          email: user.email
-        }, {
-          $push: {
-            modules: module._id
-          }
-        },
-        function (err) {
-          callback(err);
-        }
-      );
-    });
-}
 
 //Verification
 module.exports.register = function (email, password, callback) {

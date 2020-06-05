@@ -5,69 +5,69 @@ var modules = require("./models/modulesSchema").modules;
 
 //Vérifie si un utilisateur avec l'email reçue en paramètre existe
 module.exports.userExists = function (email, callback) {
-    try {
-        if (email != null) {
-            users.findOne({
-                email: email
-            }, function (err, user) {
-                if (err) {
-                    throw new Error("User unknown")
-                } else {
-                    callback(user);
-                }
-            });
-        } else {
-            throw new Error("Bad Token")
-        }
-    } catch (e) {
-        console.error("error : ", e.message);
+    if (email != null) {
+        users.findOne({
+            email: email
+        }, function (err, user) {
+            if (err || !user) {
+                callback("User unknown", null)
+            } else {
+                callback(null, user);
+            }
+        });
+    } else {
+        callback("Bad Token", null)
     }
-
 };
 
 //------------ Vérifications pour l'ajout d'un module ------------
 //Vérification qu'un module match avec les IDs reçus
-module.exports.moduleExists = function (publicID, privateID, callback) {
-    try {
+module.exports.moduleExists = function (res, publicID, privateID, callback) {
+    if (res == null) {
         modules.findOne({
             publicID: publicID,
             privateID: privateID
-        }, function (
-            err,
-            module
-        ) {
-            if (err) {
+        }, function (err, module) {
+            if (err || !module) {
                 //Les IDs ne matchent pas => le module correspondant n'existe pas
-                throw new Error("This module doesn't exist. Try again.")
+                callback("This module doesn't exist. Try again.", null)
             } else {
-                callback(module);
+                callback(null, module);
             }
         });
-    } catch (e) {
-        console.error("error : ", e.message);
+    } else {
+        callback(res, null)
     }
 }
 
 //Vérifie si l'utilisateur a déjà ajouté ce module
-module.exports.userOwnsThisModule = function (user, module, callback) {
-    if(user.modules.includes(module._id)){
-        //Cas 1: module déjà ajouté
-        throw new Error("You've already added this module.");
-    }
-    else{
-        //Cas 2: module non encore ajouté
-        callback()
+module.exports.userOwnsThisModule = function (res, user, module, callback) {
+    if (res == null) {
+
+        if (user.modules.includes(module._id)) {
+            //Cas 1: module déjà ajouté
+
+            callback("You've already added this module.");
+        } else {
+            //Cas 2: module non encore ajouté
+            callback(null)
+        }
+    } else {
+        callback(res)
     }
 }
 
 //Vérifie si le module est déjà associé à un utilisateur
-module.exports.isModuleUsed = function (module, callback) {
-    if(module.used){
-        //Cas 1: module ajouté par un autre utilisateur
-        throw new Error("This module isn't available.");
-    }
-    else{
-        //Cas 2: module disponible
-        callback()
+module.exports.isModuleUsed = function (res, module, callback) {
+    if (res == null) {
+        if (module.used) {
+            //Cas 1: module ajouté par un autre utilisateur
+            callback("This module isn't available.");
+        } else {
+            //Cas 2: module disponible
+            callback(null)
+        }
+    } else {
+        callback(res)
     }
 }
