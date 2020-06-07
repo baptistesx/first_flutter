@@ -10,7 +10,7 @@ module.exports.userExists = function (email, callback) {
             email: email
         }, function (err, user) {
             if (err || !user) {
-                callback("User unknown", null)
+                callback("User not found", null)
             } else {
                 callback(null, user);
             }

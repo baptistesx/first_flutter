@@ -44,45 +44,39 @@ app.post("/api/login", function (req, res) {
 //Route pour ajouter un module à l'utilisateur
 app.post("/api/user/addModule", function (req, res) {
   console.log("new request: /api/user/addModule");
+  //Vérification du JWT (JSON Web Token)
+  //Vérifie si le token match bien avec l'email
+  var email = jwt.verify(req.get("Authorization"), KEY, {
+    algorithm: "HS256"
+  }).email; //le mettre en variable globale?
 
-  try {
-    //Vérification du JWT (JSON Web Token)
-    //Vérifie si le token match bien avec l'email
-    var email = jwt.verify(req.get("Authorization"), KEY, {
-      algorithm: "HS256"
-    }).email;
-
-    //Ajout du module dans la liste des modules de l'utilisateur
-    mongo.addModule(
-      email,
-      req.body.name,
-      req.body.place,
-      req.body.publicID,
-      req.body.privateID,
-      function (answer) {
-        res.send(answer);
-      }
-    );
-  } catch (error) {
-    console.log(error.message)
-    res.status(401).send(error.message);
-  }
+  //Ajout du module dans la liste des modules de l'utilisateur
+  mongo.addModule(
+    email,
+    req.body.name,
+    req.body.place,
+    req.body.publicID,
+    req.body.privateID,
+    function (answer, code) {
+      res.status(code).send(answer);
+    }
+  );
 });
 
 //Mise à jour de l'état d'un actionneur d'id reçu en paramètre
 app.post("/api/user/setActuatorState", function (req, res) {
   console.log("new request: /api/user/setActuatorState");
 
-  try {
+  var id = req.body.actuatorId;
+  var value = req.body.value;
     //Vérification du JWT (JSON Web Token)
-    var email = mongo.checkJWT(req.get("Authorization"), KEY);
+    var email = jwt.verify(req.get("Authorization"), KEY, {
+      algorithm: "HS256"
+    }).email;
 
-    if (email != null) {
       //Récupération de l'utilisateur associé au JWT
-      controler.userExists(email, function (user) {
+      controler.userExists(email, function (err, user) {
         if (user != null) {
-          var id = req.body.actuatorId;
-          var value = req.body.value;
 
           //TODO: Faire réelle requete au module et changer etat en bdd que si validé par module
 
@@ -90,27 +84,26 @@ app.post("/api/user/setActuatorState", function (req, res) {
             res.status(code).send(answer);
           });
         }
+        else{
+          res.status(401).send(err)
+        }
       });
-    }
-  } catch {
-    res.status(401).send("Bad Token");
-  }
 });
 
 //Mise à jour du mode automatic de l'actionneur
 app.post("/api/user/setActuatorAutomaticMode", function (req, res) {
   console.log("new request: /api/user/setActuatorAutomaticMode");
 
-  try {
+  var id = req.body.actuatorId;
+  var value = req.body.value;
     //Vérification du JWT (JSON Web Token)
-    var email = mongo.checkJWT(req.get("Authorization"), KEY);
+    var email = jwt.verify(req.get("Authorization"), KEY, {
+      algorithm: "HS256"
+    }).email;
 
-    if (email != null) {
       //Récupération de l'utilisateur associé au JWT
-      mongo.userExists(email, function (user) {
+      controler.userExists(email, function (err, user) {
         if (user != null) {
-          var id = req.body.actuatorId;
-          var value = req.body.value;
 
           //TODO: Faire réelle requete au module et changer etat en bdd que si validé par module
 
@@ -118,29 +111,27 @@ app.post("/api/user/setActuatorAutomaticMode", function (req, res) {
             res.status(code).send(answer);
           });
         }
+        else{
+          res.status(401).send(err)
+        }
       });
-    }
-  } catch {
-    res.status(401).send("Bad Token");
-  }
 });
 
 //Mise à jour du mode automatic de l'actionneur
 app.post("/api/user/updateSensorAutomaticMode", function (req, res) {
   console.log("new request: /api/user/updateSensorAutomaticMode");
 
-  try {
+  var sensorId = req.body.sensorId;
+  var sensorDataIndex = req.body.sensorDataIndex;
+  var newValue = req.body.newValue;
     //Vérification du JWT (JSON Web Token)
-    var email = mongo.checkJWT(req.get("Authorization"), KEY);
+    var email = jwt.verify(req.get("Authorization"), KEY, {
+      algorithm: "HS256"
+    }).email;
 
-    if (email != null) {
       //Récupération de l'utilisateur associé au JWT
-      mongo.userExists(email, function (user) {
-        if (user != null) {
-          var sensorId = req.body.sensorId;
-          var sensorDataIndex = req.body.sensorDataIndex;
-          var newValue = req.body.newValue;
-
+      controler.userExists(email, function (err, user) {
+        if(user != null){
           //TODO: Faire réelle requete au module et changer etat en bdd que si validé par module
 
           mongo.updateSensorDataAutomaticMode(
@@ -152,32 +143,31 @@ app.post("/api/user/updateSensorAutomaticMode", function (req, res) {
             }
           );
         }
+        else{
+          res.status(401).send(err)
+        }
       });
-    }
-  } catch {
-    res.status(401).send("Bad Token");
-  }
 });
 
 //Mise à jour de la config d'un sensorData
 app.post("/api/user/updateSensorDataConfig", function (req, res) {
   console.log("new request: /api/user/updateSensorDataConfig");
 
-  try {
+  var sensorId = req.body.sensorId;
+  var sensorDataIndex = req.body.sensorDataIndex;
+  var newNominalValue = req.body.newNominalValue;
+  var newAcceptableMin = req.body.newAcceptableMin;
+  var newAcceptableMax = req.body.newAcceptableMax;
+  var newCriticalMin = req.body.newCriticalMin;
+  var newCriticalMax = req.body.newCritiacalMax;
     //Vérification du JWT (JSON Web Token)
-    var email = mongo.checkJWT(req.get("Authorization"), KEY);
+    var email = jwt.verify(req.get("Authorization"), KEY, {
+      algorithm: "HS256"
+    }).email;
 
-    if (email != null) {
       //Récupération de l'utilisateur associé au JWT
-      mongo.userExists(email, function (user) {
+      controler.userExists(email, function (err, user) {
         if (user != null) {
-          var sensorId = req.body.sensorId;
-          var sensorDataIndex = req.body.sensorDataIndex;
-          var newNominalValue = req.body.newNominalValue;
-          var newAcceptableMin = req.body.newAcceptableMin;
-          var newAcceptableMax = req.body.newAcceptableMax;
-          var newCriticalMin = req.body.newCriticalMin;
-          var newCriticalMax = req.body.newCritiacalMax;
 
           //TODO: Faire réelle requete au module et changer etat en bdd que si validé par module
 
@@ -194,30 +184,30 @@ app.post("/api/user/updateSensorDataConfig", function (req, res) {
             }
           );
         }
+        else{
+          res.status(401).send(err)
+        }
       });
-    }
-  } catch {
-    res.status(401).send("Bad Token");
-  }
+    
 });
 
 //Route pour mise à jour du module d'id reçu en paramètre
 app.post("/api/user/updateModule", function (req, res) {
   console.log("new request: /api/user/updateModule");
 
-  try {
+  var id = req.body.id;
+  var newName = req.body.newName;
+  var newPlace = req.body.newPlace;
     //Vérification du JWT (JSON Web Token)
-    var email = mongo.checkJWT(req.get("Authorization"), KEY);
+    var email = jwt.verify(req.get("Authorization"), KEY, {
+      algorithm: "HS256"
+    }).email;
 
-    if (email != null) {
       //Récupération de l'utilisateur associé au JWT
-      mongo.userExists(email, function (user) {
+      controler.userExists(email, function (err, user) {
         if (user != null) {
-          var id = req.body.id;
-          var newName = req.body.newName;
-          var newPlace = req.body.newPlace;
-          console.log(newName);
-          console.log(newPlace);
+          // console.log(newName);
+          // console.log(newPlace);
           var response = "ok";
           var codeResponse = 200;
           if (newName != "") {
@@ -232,52 +222,50 @@ app.post("/api/user/updateModule", function (req, res) {
               response = answer;
             });
           }
+          res.status(codeResponse).send(response);
         }
-        res.status(codeResponse).send(response);
-      });
-    }
-  } catch {
-    res.status(401).send("Bad Token");
-  }
+        else{
+          res.status(401).send(err)
+        } 
+     });
 });
 
 //Route pour mise à jour d'un capteur d'id reçu en paramètre
 app.post("/api/user/updateSensor", function (req, res) {
   console.log("new request: /api/user/updateSensor");
 
-  try {
+  var id = req.body.id;
+  var newName = req.body.newName;
     //Vérification du JWT (JSON Web Token)
-    var email = mongo.checkJWT(req.get("Authorization"), KEY);
+    var email = jwt.verify(req.get("Authorization"), KEY, {
+      algorithm: "HS256"
+    }).email;
 
-    if (email != null) {
       //Récupération de l'utilisateur associé au JWT
-      mongo.userExists(email, function (user) {
+      controler.userExists(email, function (err, user) {
         if (user != null) {
-          var id = req.body.id;
-          var newName = req.body.newName;
-          console.log(newName);
+          // console.log(newName);
           mongo.updateSensor(id, newName, function (code, answer) {
             res.status(code).send(answer);
           });
         }
+        else{
+          res.status(401).send(err)
+        }
       });
-    }
-  } catch {
-    res.status(401).send("Bad Token");
-  }
 });
 
 //Utilisateur "supprime" un module de sa liste => libérer module mais pas supprimer
 app.post("/api/user/removeModule", function (req, res) {
   console.log("new request: /api/user/removeModule");
 
-  try {
     //Vérification du JWT (JSON Web Token)
-    var email = mongo.checkJWT(req.get("Authorization"), KEY);
+    var email = jwt.verify(req.get("Authorization"), KEY, {
+      algorithm: "HS256"
+    }).email;
 
-    if (email != null) {
       //Récupération de l'utilisateur associé au JWT
-      mongo.userExists(email, function (user) {
+      controler.userExists(email, function (err, user) {
         if (user != null) {
           var id = req.body.id;
 
@@ -285,38 +273,31 @@ app.post("/api/user/removeModule", function (req, res) {
             res.status(code).send(answer);
           });
         } else {
-          res.status(401).send("User not found");
+          res.status(401).send(err);
         }
       });
-    }
-  } catch {
-    res.status(401).send("Bad Token");
-  }
 });
 
 app.get("/api/user/getModules", function (req, res) {
   console.log("new request: /api/user/getModules");
 
-  try {
     //Vérification du JWT (JSON Web Token)
     var email = jwt.verify(req.get("Authorization"), KEY, {
       algorithm: "HS256"
     }).email;
-    if (email != null) {
+    
       //Récupération de l'utilisateur associé au JWT
-      controler.userExists(email, function (user) {
+      controler.userExists(email, function (err, user) {
         if (user != null) {
           mongo.getModules(email, function (code, answer) {
             console.log("%j", answer);
             res.status(code).send(answer);
           });
         }
+       else {
+        res.status(401).send(err);
+      }
       });
-    }
-  } catch (e) {
-    console.log(e)
-    res.status(401).send("Bad Token");
-  }
 });
 
 // Démarrage du serveur

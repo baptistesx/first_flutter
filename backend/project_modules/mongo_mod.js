@@ -26,10 +26,6 @@ module.exports.connectDB = function () {
 };
 
 //Encryption du password reçu en paramètre
-module.exports.encryptPwd = function (pwd, callback) {
-  callback(crypto.createHash("sha256").update(pwd).digest("hex"));
-};
-//TODO: trouver comment déclarer qu'une seule fois cette fonction
 encryptPwd = function (pwd, callback) {
   callback(crypto.createHash("sha256").update(pwd).digest("hex"));
 };
@@ -43,7 +39,6 @@ module.exports.addModule = function (
   privateID,
   callback
 ) {
-
   controler.userExists(email, function (res, user) {
     //Vérification de l'existence du module (les deux ID doivent matcher)
     controler.moduleExists(res, publicID, privateID, function (res, module) {
@@ -70,9 +65,9 @@ module.exports.addModule = function (
             user.save(function (err) {
               if (err) return handleError(err);
             })
-            callback("The module has been added with success!");
+            callback("The module has been added with success!", 201);
           } else {
-            callback("Error while adding the module : " + res);
+            callback("Error while adding the module : " + res, 401);
           }
         });
       });
@@ -81,18 +76,18 @@ module.exports.addModule = function (
 
 };
 
-//Verification
+// --------------- SIGNUP ---------------
 module.exports.register = function (email, password, callback) {
   //Vérification du format de l'email
   var emailVerif = validator.validate(email);
 
   if (emailVerif) {
     //Le format de l'email est correct
-    users.find({
+    users.findOne({
         email: email,
       },
       function (err, user) {
-        if (user.length != 0) {
+        if (user != null) {
           //Cas 1: cette adresse email est déjà utilisée
           callback(409, "An user with that username already exists");
         } else {
@@ -131,14 +126,14 @@ module.exports.logUser = function (email, password, callback) {
   //Le password est encrypté
   encryptPwd(password, function (encPassword) {
     //Recherche d'un utilisateur qui match l'email et le password encrypté
-    users.find(
+    users.findOne(
       //TODO: utiliser findOne?
       {
         email: email,
         pwd: encPassword,
       },
       function (err, user) {
-        if (user.length != 0) {
+        if (user != null) {
           //L'utilisateur existe bien
 
           var payload = {
@@ -161,7 +156,7 @@ module.exports.logUser = function (email, password, callback) {
 };
 
 //Mise à jour du nom du module d'id reçu en paramètre
-module.exports.updateModuleName = function (id, newName, callback) {
+module.exports.updateModuleName = function (id, newName, callback) { //update géneral : updateField?
   modules
     .updateOne({
       _id: id
@@ -169,8 +164,7 @@ module.exports.updateModuleName = function (id, newName, callback) {
       $set: {
         name: newName,
       },
-    })
-    .then((obj) => {
+    }, function(err, res) {// test res
       callback(200, "ok");
     });
 };
@@ -184,31 +178,13 @@ module.exports.updateModulePlace = function (id, newPlace, callback) {
       $set: {
         place: newPlace,
       },
-    })
-    .then((obj) => {
+    }, function() {
       callback(200, "ok");
     });
 };
 
 //Mise à jour du nom du capteur d'id reçu en paramètre
 module.exports.updateSensor = function (id, newName, callback) {
-  sensors
-    .updateOne({
-      _id: id
-    }, {
-      $set: {
-        name: newName,
-      },
-    })
-    .then((obj) => {
-      callback(200, "ok");
-    });
-};
-
-//Mise à jour du nom du capteur d'id reçu en paramètre
-module.exports.updateSensorName = function (id, newName, callback) {
-  console.log(id);
-  console.log(newName);
   sensors
     .updateOne({
       _id: id
@@ -232,8 +208,7 @@ module.exports.setActuatorState = function (id, value, callback) {
       $set: {
         state: value,
       },
-    })
-    .then((obj) => {
+    }, function() {
       callback(200, "Success");
     });
 };
@@ -330,14 +305,14 @@ module.exports.updateSensorDataAutomaticMode = function (
   newValue,
   callback
 ) {
-  console.log(sensorId);
-  console.log(sensorDataIndexValue);
-  console.log(newValue);
+  // console.log(sensorId);
+  // console.log(sensorDataIndexValue);
+  // console.log(newValue);
 
   sensors.findOne({
     _id: sensorId
   }, function (err, sensor) {
-    sensor.sensorData[sensorDataIndexValue].automaticMode = newValue;
+    sensor.automaticMode = newValue;
     sensor.save();
     callback(200, "Success");
   });
@@ -353,26 +328,26 @@ module.exports.updateSensorDataConfig = function (
   newCriticalMax,
   callback
 ) {
-  console.log(sensorId);
-  console.log(sensorDataIndex);
-  console.log(newNominalValue);
-  console.log(newAcceptableMin);
-  console.log(newAcceptableMax);
-  console.log(newCriticalMin);
-  console.log(newCriticalMax);
+  // console.log(sensorId);
+  // console.log(sensorDataIndex);
+  // console.log(newNominalValue);
+  // console.log(newAcceptableMin);
+  // console.log(newAcceptableMax);
+  // console.log(newCriticalMin);
+  // console.log(newCriticalMax);
 
   sensors.findOne({
     _id: sensorId
   }, function (err, sensor) {
-    sensor.sensorData[sensorDataIndex].nominalValue = newNominalValue;
+    sensor.nominalValue = newNominalValue;
 
-    sensor.sensorData[sensorDataIndex].acceptableMin = newAcceptableMin;
+    sensor.acceptableMin = newAcceptableMin;
 
-    sensor.sensorData[sensorDataIndex].acceptableMax = newAcceptableMax;
+    sensor.acceptableMax = newAcceptableMax;
 
-    sensor.sensorData[sensorDataIndex].criticalMin = newCriticalMin;
+    sensor.criticalMin = newCriticalMin;
 
-    sensor.sensorData[sensorDataIndex].criticalMax = newCriticalMax;
+    sensor.criticalMax = newCriticalMax;
 
     sensor.save();
     callback(200, "Success");
