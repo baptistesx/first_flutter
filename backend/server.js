@@ -1,7 +1,24 @@
-//TODO: créer fichier de log
+//TODO: créer fichier de log (écrire dans un fichier: date, heure, commande, resultat)
+
 //TODO: décrire chaque paramètre des fonctions + callback
+
 //TODO: gerer tous les cas d'erreur
+
 //TODO: utiliser des callback(code, "reponse") dans mongo_mod.js
+
+//TODO: passer le serveur en https, voir server_https_to_check.js
+// + https://www.zem.fr/creer-un-serveur-https-nodejs-express/ pour générer le certificat
+
+//TODO: faire en sorte que toutes les requetes sur les modules soient bien exécutées
+// sur le user après l'avoir checké
+
+//TODO: supprimer le paramètre sensorDataIndex car devenu inutile comme on a descendu d'un niveau
+
+//TODO: coup de formattage auto
+
+//TODO: supprimer commentaires inutiles (console.log)
+
+//TODO: ajouter tableau d'actuators au schema du module
 
 var express = require("express");
 var app = express();
@@ -48,7 +65,7 @@ app.post("/api/user/addModule", function (req, res) {
   //Vérifie si le token match bien avec l'email
   var email = jwt.verify(req.get("Authorization"), KEY, {
     algorithm: "HS256"
-  }).email; //le mettre en variable globale?
+  }).email;
 
   //Ajout du module dans la liste des modules de l'utilisateur
   mongo.addModule(
