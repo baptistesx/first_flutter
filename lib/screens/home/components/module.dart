@@ -10,12 +10,15 @@ import 'package:http/http.dart' as http;
 
 // const SERVER_IP = 'http://10.0.2.2:8081';
 // const SERVER_IP = 'http://192.168.1.26:8081';
-const SERVER_IP = 'http://192.168.0.24:8081';
-Object getModules(http.Client client, jwt) async {
-  final response = await client
-      .get(SERVER_IP + '/api/user/getModules', headers: {"Authorization": jwt});
-  return (response.body);
-}
+// const SERVER_IP = 'http://192.168.0.24:8081';
+const SERVER_IP = 'http://192.168.1.118:8081';
+
+// Object getModules(http.Client client, jwt) async {
+//   final response = await client
+//       .get(SERVER_IP + '/api/user/getModules', headers: {"Authorization": jwt});
+//   print(response.body);
+//   return (response.body);
+// }
 
 Future<List<Module>> fetchModules(http.Client client, jwt) async {
   final response = await client
@@ -50,6 +53,8 @@ class Module {
       id: json['_id'] as String,
       name: json['name'] as String,
       place: json['place'] as String,
+      // sensors: new List(),
+      // actuators: new List(),
       sensors: (json['sensors'] as List)
           .map((sensor) => Sensor.fromJson(sensor))
           .toList(),

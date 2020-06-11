@@ -63,46 +63,48 @@ class _ModulesListState extends State<ModulesList> {
     List<Widget> columnContent = [];
 
     for (Sensor sensor in module.sensors) {
-      for (SensorData sensorDat in sensor.sensorData) {
-        columnContent.add(
-          new ListTile(
-              title: new Column(children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      sensor.name + " (" + sensorDat.dataType + ")",
-                      style: new TextStyle(
-                          fontSize: 18.0, color: Colors.lightBlue),
-                    ),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.grey,
-                      size: 15,
-                    ),
-                  ],
-                ),
-                Text(DateFormat('MMMM d, kk:mm')
-                        .format(sensorDat.data.values[0].date)
-                        .toString() +
-                    ": " +
-                    sensorDat.data.values[0].value.toString() +
-                    sensorDat.unit)
-              ]),
-              onTap: () {
-                sensor.pushSensorDetails(
-                    context, sensor.sensorData.indexOf(sensorDat));
-              }),
-        );
-      }
+      columnContent.add(
+        new ListTile(
+            title: new Column(children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    sensor.name + " (" + sensor.dataType + ")",
+                    style:
+                        new TextStyle(fontSize: 18.0, color: Colors.lightBlue),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.grey,
+                    size: 15,
+                  ),
+                ],
+              ),
+              Text(DateFormat('MMMM d, kk:mm')
+                      .format(sensor.data.values[0].date)
+                      .toString() +
+                  ": " +
+                  sensor.data.values[0].value.toString() +
+                  sensor.unit)
+            ]),
+            onTap: () {
+              sensor.pushSensorDetails(context);
+            }),
+      );
     }
 
     for (Actuator actuator in module.actuators) {
+      // var callback;
+      // if(sensor.sensorData[sensorDataIndex]) = (bool s) => print(s);
+      // callback= null;
       Switch stateSwitch = new Switch(
         value: actuator.stateIsSwitched,
-        onChanged: (value) {
+        onChanged: //callback,
+            (value) {
           setState(() {
-            actuator.toggleState(value);
+            null;
+            // actuator.toggleState(value);
           });
         },
         activeTrackColor: Colors.lightGreenAccent,
@@ -135,4 +137,8 @@ class _ModulesListState extends State<ModulesList> {
     }
     return columnContent;
   }
+
+  //         var callback = function(bool value) {
+  // }
+
 }

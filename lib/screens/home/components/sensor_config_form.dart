@@ -13,8 +13,8 @@ import 'data.dart';
 // const SERVER_IP = 'http://10.0.2.2:8081';
 // const SERVER_IP = 'http://192.168.1.26:8081';
 // const SERVER_IP = 'http://192.168.0.24:8081';
-const SERVER_IP = 'http://192.168.0.24:8081';
-
+// const SERVER_IP = 'http://192.168.0.24:8081';
+const SERVER_IP = 'http://192.168.1.118:8081';
 final storage = FlutterSecureStorage();
 
 class SensorConfigForm extends StatefulWidget {
@@ -47,20 +47,18 @@ class _SensorConfigForm extends State<SensorConfigForm> {
             )),
       );
 
-  Future<String> updateSensorDataConfig(
-      Sensor sensor, int sensorDataIndex) async {
-    SensorData sensorDataI = sensor.sensorData[sensorDataIndex];
+  Future<String> updateSensorDataConfig(Sensor sensor) async {
     final response = await http
         .post(SERVER_IP + '/api/user/updateSensorDataConfig', headers: {
       "Authorization": jwt
     }, body: {
       "sensorId": sensor.id,
       "sensorDataIndex": sensorDataIndex.toString(),
-      "newNominalValue": sensorDataI.temp_nominalValue.toString(),
-      "newAcceptableMin": sensorDataI.temp_acceptableMin.toString(),
-      "newAcceptableMax": sensorDataI.temp_acceptableMax.toString(),
-      "newCriticalMin": sensorDataI.temp_criticalMin.toString(),
-      "newCritiacalMax": sensorDataI.temp_criticalMax.toString(),
+      "newNominalValue": sensor.temp_nominalValue.toString(),
+      "newAcceptableMin": sensor.temp_acceptableMin.toString(),
+      "newAcceptableMax": sensor.temp_acceptableMax.toString(),
+      "newCriticalMin": sensor.temp_criticalMin.toString(),
+      "newCritiacalMax": sensor.temp_criticalMax.toString(),
     });
     print(response.body);
     if (response.statusCode == 200) return response.body;
@@ -70,31 +68,25 @@ class _SensorConfigForm extends State<SensorConfigForm> {
 
   void resetSlidersValues() {
     print("reset sliders!");
-    sensor.sensorData[sensorDataIndex].temp_nominalValue =
-        sensor.sensorData[sensorDataIndex].nominalValue;
+    sensor.temp_nominalValue = sensor.nominalValue;
 
-    sensor.sensorData[sensorDataIndex].temp_acceptableMin =
-        sensor.sensorData[sensorDataIndex].acceptableMin;
+    sensor.temp_acceptableMin = sensor.acceptableMin;
 
-    sensor.sensorData[sensorDataIndex].temp_acceptableMax =
-        sensor.sensorData[sensorDataIndex].acceptableMax;
+    sensor.temp_acceptableMax = sensor.acceptableMax;
 
-    sensor.sensorData[sensorDataIndex].temp_criticalMin =
-        sensor.sensorData[sensorDataIndex].criticalMin;
+    sensor.temp_criticalMin = sensor.criticalMin;
 
-    sensor.sensorData[sensorDataIndex].temp_criticalMax =
-        sensor.sensorData[sensorDataIndex].criticalMax;
+    sensor.temp_criticalMax = sensor.criticalMax;
   }
 
   @override
   Widget build(BuildContext context) {
-    print("bbb:" + sensor.sensorData[sensorDataIndex].criticalMin.toString());
-    var sensorDataI = sensor.sensorData[sensorDataIndex];
-    var limitMin = sensorDataI.limitMin;
-    var limitMax = sensorDataI.limitMax;
-    // var acceptableMin = sensorDataI.acceptableMin;
-    // var acceptableMax = sensorDataI.acceptableMax;
-    // var okRangeValues = RangeValues(sensorDataI.acceptableMin, sensorDataI.acceptableMax);
+    print("bbb:" + sensor.criticalMin.toString());
+    var limitMin = sensor.limitMin;
+    var limitMax = sensor.limitMax;
+    // var acceptableMin = sensor.acceptableMin;
+    // var acceptableMax = sensor.acceptableMax;
+    // var okRangeValues = RangeValues(sensor.acceptableMin, sensor.acceptableMax);
 
     return Form(
       key: _connectionFormKey,
@@ -137,18 +129,17 @@ class _SensorConfigForm extends State<SensorConfigForm> {
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Icon(Icons.wb_sunny),
                     Slider(
-                      label:
-                          "${sensorDataI.temp_nominalValue.toStringAsFixed(1)}",
+                      label: "${sensor.temp_nominalValue.toStringAsFixed(1)}",
                       min: limitMin,
                       max: limitMax,
                       divisions: ((limitMax - limitMin) * 2).round(),
-                      value: sensorDataI.temp_nominalValue,
+                      value: sensor.temp_nominalValue,
                       activeColor: Color(0xff512ea8),
                       inactiveColor: Color(0xffac9bcc),
                       onChanged: (newValue) {
-                        print("cccc:${sensorDataI.temp_nominalValue}");
+                        print("cccc:${sensor.temp_nominalValue}");
                         setState(() {
-                          sensorDataI.temp_nominalValue = newValue;
+                          sensor.temp_nominalValue = newValue;
                         });
                       },
                     ),
@@ -165,10 +156,10 @@ class _SensorConfigForm extends State<SensorConfigForm> {
                     Icon(Icons.wb_sunny),
                     RangeSlider(
                       labels: RangeLabels(
-                          '${sensorDataI.temp_acceptableMin.toStringAsFixed(1)}',
-                          '${sensorDataI.temp_acceptableMax.toStringAsFixed(1)}'),
-                      values: RangeValues(sensorDataI.temp_acceptableMin,
-                          sensorDataI.temp_acceptableMax),
+                          '${sensor.temp_acceptableMin.toStringAsFixed(1)}',
+                          '${sensor.temp_acceptableMax.toStringAsFixed(1)}'),
+                      values: RangeValues(
+                          sensor.temp_acceptableMin, sensor.temp_acceptableMax),
                       min: limitMin,
                       max: limitMax,
                       divisions: ((limitMax - limitMin) * 2).round(),
@@ -176,8 +167,8 @@ class _SensorConfigForm extends State<SensorConfigForm> {
                       inactiveColor: Color(0xffac9bcc),
                       onChanged: (newValues) {
                         setState(() {
-                          sensorDataI.temp_acceptableMin = newValues.start;
-                          sensorDataI.temp_acceptableMax = newValues.end;
+                          sensor.temp_acceptableMin = newValues.start;
+                          sensor.temp_acceptableMax = newValues.end;
                         });
                       },
                     ),
@@ -194,17 +185,16 @@ class _SensorConfigForm extends State<SensorConfigForm> {
                   Row(mainAxisSize: MainAxisSize.min, children: [
                     Icon(Icons.wb_sunny),
                     Slider(
-                      label:
-                          "${sensorDataI.temp_criticalMin.toStringAsFixed(1)}",
+                      label: "${sensor.temp_criticalMin.toStringAsFixed(1)}",
                       min: limitMin,
                       max: limitMax,
                       divisions: ((limitMax - limitMin) * 2).round(),
-                      value: sensorDataI.temp_criticalMin,
+                      value: sensor.temp_criticalMin,
                       activeColor: Color(0xff512ea8),
                       inactiveColor: Color(0xffac9bcc),
                       onChanged: (newValue) {
                         setState(() {
-                          sensorDataI.temp_criticalMin = newValue;
+                          sensor.temp_criticalMin = newValue;
                         });
                       },
                     ),
@@ -220,17 +210,16 @@ class _SensorConfigForm extends State<SensorConfigForm> {
                   Row(mainAxisSize: MainAxisSize.min, children: [
                     Icon(Icons.wb_sunny),
                     Slider(
-                      label:
-                          "${sensorDataI.temp_criticalMax.toStringAsFixed(1)}",
+                      label: "${sensor.temp_criticalMax.toStringAsFixed(1)}",
                       min: limitMin,
                       max: limitMax,
                       divisions: ((limitMax - limitMin) * 2).round(),
-                      value: sensorDataI.temp_criticalMax,
+                      value: sensor.temp_criticalMax,
                       activeColor: Color(0xff512ea8),
                       inactiveColor: Color(0xffac9bcc),
                       onChanged: (newValue) {
                         setState(() {
-                          sensorDataI.temp_criticalMax = newValue;
+                          sensor.temp_criticalMax = newValue;
                         });
                       },
                     ),
@@ -253,42 +242,39 @@ class _SensorConfigForm extends State<SensorConfigForm> {
                       color: Colors.green,
                       onPressed: () async {
                         print("sensor id: +${sensor.id}");
-                        print("nominale: ${sensorDataI.nominalValue}");
-                        print("acceptableMin: ${sensorDataI.acceptableMin}");
-                        print("acceptableMax: ${sensorDataI.acceptableMax}");
-                        print("criticalMin: ${sensorDataI.criticalMin}");
-                        print("criticalMax: ${sensorDataI.criticalMax}");
+                        print("nominale: ${sensor.nominalValue}");
+                        print("acceptableMin: ${sensor.acceptableMin}");
+                        print("acceptableMax: ${sensor.acceptableMax}");
+                        print("criticalMin: ${sensor.criticalMin}");
+                        print("criticalMax: ${sensor.criticalMax}");
                         print("");
                         print("sensor id: +${sensor.id}");
-                        print("nominale: ${sensorDataI.temp_nominalValue}");
-                        print(
-                            "acceptableMin: ${sensorDataI.temp_acceptableMin}");
-                        print(
-                            "acceptableMax: ${sensorDataI.temp_acceptableMax}");
-                        print("criticalMin: ${sensorDataI.temp_criticalMin}");
-                        print("criticalMax: ${sensorDataI.temp_criticalMax}");
+                        print("nominale: ${sensor.temp_nominalValue}");
+                        print("acceptableMin: ${sensor.temp_acceptableMin}");
+                        print("acceptableMax: ${sensor.temp_acceptableMax}");
+                        print("criticalMin: ${sensor.temp_criticalMin}");
+                        print("criticalMax: ${sensor.temp_criticalMax}");
 
-                        if (sensorDataI.temp_nominalValue <=
-                                sensorDataI.temp_acceptableMin ||
-                            sensorDataI.temp_nominalValue >=
-                                sensorDataI.temp_acceptableMax) {
+                        if (sensor.temp_nominalValue <=
+                                sensor.temp_acceptableMin ||
+                            sensor.temp_nominalValue >=
+                                sensor.temp_acceptableMax) {
                           displayDialog(context, "ERROR",
                               "The nominal value must inside the acceptable range!");
-                        } else if (sensorDataI.temp_acceptableMin <=
-                                sensorDataI.temp_criticalMin ||
-                            sensorDataI.temp_acceptableMin >=
-                                sensorDataI.temp_criticalMax) {
+                        } else if (sensor.temp_acceptableMin <=
+                                sensor.temp_criticalMin ||
+                            sensor.temp_acceptableMin >=
+                                sensor.temp_criticalMax) {
                           displayDialog(context, "ERROR",
                               "The acceptable minimal value must be set between the minimal critical value and the maximum one");
-                        } else if (sensorDataI.temp_acceptableMax <=
-                                sensorDataI.temp_criticalMin ||
-                            sensorDataI.temp_acceptableMax >=
-                                sensorDataI.temp_criticalMax) {
+                        } else if (sensor.temp_acceptableMax <=
+                                sensor.temp_criticalMin ||
+                            sensor.temp_acceptableMax >=
+                                sensor.temp_criticalMax) {
                           displayDialog(context, "ERROR",
                               "The acceptable maximal value must be set between the minimal critical value and the maximum one");
                         } else {
-                          var res = await updateSensorDataConfig(
-                              sensor, sensorDataIndex);
+                          var res = await updateSensorDataConfig(sensor);
                           displayDialog(context, "RESULT", res);
                         }
 

@@ -17,19 +17,16 @@ import 'components/sensorSettingsDialog.dart';
 
 class SensorDetailsPage extends StatefulWidget {
   Sensor sensor;
-  int sensorDataIndex;
-  SensorDetailsPage(this.sensor, this.sensorDataIndex, {Key key})
-      : super(key: key);
+  SensorDetailsPage(this.sensor, {Key key}) : super(key: key);
 
   @override
-  _SensorDetailsPage createState() =>
-      _SensorDetailsPage(sensor, sensorDataIndex);
+  _SensorDetailsPage createState() => _SensorDetailsPage(sensor);
 }
 
 class _SensorDetailsPage extends State<SensorDetailsPage> {
   Sensor sensor;
   int sensorDataIndex;
-  _SensorDetailsPage(this.sensor, this.sensorDataIndex);
+  _SensorDetailsPage(this.sensor);
 
   void displayDialogUpdate(BuildContext context, String title) => showDialog(
         context: context,
@@ -83,8 +80,7 @@ class _SensorDetailsPage extends State<SensorDetailsPage> {
   Widget build(BuildContext context) {
     List<Value> data = new List();
 
-    final Iterable<ListTile> tiles =
-        sensor.sensorData[sensorDataIndex].data.values.map(
+    final Iterable<ListTile> tiles = sensor.data.values.map(
       (Value val) {
         data.add(val);
         return ListTile(
@@ -92,7 +88,7 @@ class _SensorDetailsPage extends State<SensorDetailsPage> {
               " : " +
               val.value.toString() +
               " " +
-              sensor.sensorData[sensorDataIndex].unit),
+              sensor.unit),
         );
       },
     );
@@ -114,11 +110,7 @@ class _SensorDetailsPage extends State<SensorDetailsPage> {
       series,
       animate: true,
       behaviors: [
-        new charts.ChartTitle(
-            sensor.sensorData[sensorDataIndex].dataType +
-                " (" +
-                sensor.sensorData[sensorDataIndex].unit +
-                ")",
+        new charts.ChartTitle(sensor.dataType + " (" + sensor.unit + ")",
             // subTitle: 'Top sub-title text',
             behaviorPosition: charts.BehaviorPosition.top,
             titleOutsideJustification: charts.OutsideJustification.start,
@@ -145,10 +137,7 @@ class _SensorDetailsPage extends State<SensorDetailsPage> {
         appBar: AppBar(
           title: Row(
             children: <Widget>[
-              Text(sensor.name +
-                  " (" +
-                  sensor.sensorData[sensorDataIndex].dataType +
-                  ")"),
+              Text(sensor.name + " (" + sensor.dataType + ")"),
               IconButton(
                 onPressed: () {
                   print("clicked!");
@@ -168,12 +157,11 @@ class _SensorDetailsPage extends State<SensorDetailsPage> {
                 children: <Widget>[
                   Text("Automatic mode: "),
                   Switch(
-                    value: sensor.sensorData[sensorDataIndex].automaticMode,
+                    value: sensor.automaticMode,
                     onChanged: (value) {
                       setState(() {
-                        sensor.sensorData[sensorDataIndex]
-                            .updateSensorDataAutomaticMode(
-                                sensor.id, sensorDataIndex, value);
+                        sensor.updateSensorDataAutomaticMode(
+                            sensor.id, sensorDataIndex, value);
                       });
                     },
                     activeTrackColor: Colors.lightGreenAccent,
@@ -183,7 +171,7 @@ class _SensorDetailsPage extends State<SensorDetailsPage> {
               ),
             ),
             Visibility(
-              visible: sensor.sensorData[sensorDataIndex].automaticMode,
+              visible: sensor.automaticMode,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SensorConfigForm(sensor, sensorDataIndex),

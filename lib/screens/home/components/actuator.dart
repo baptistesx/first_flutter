@@ -8,7 +8,8 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
-const SERVER_IP = 'http://192.168.0.24:8081';
+// const SERVER_IP = 'http://192.168.0.24:8081';
+const SERVER_IP = 'http://192.168.1.118:8081';
 
 class Actuator {
   final String id;

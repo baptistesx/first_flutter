@@ -6,7 +6,9 @@ import 'package:http/http.dart' as http;
 
 // const SERVER_IP = 'http://10.0.2.2:8081';
 // const SERVER_IP = 'http://192.168.1.26:8081';
-const SERVER_IP = 'http://192.168.0.24:8081';
+// const SERVER_IP = 'http://192.168.0.24:8081';
+const SERVER_IP = 'http://192.168.1.118:8081';
+
 Future<String> addModule(name, place, publicID, privateID, jwt) async {
   print("launch request");
   final response = await http.post(SERVER_IP + '/api/user/addModule', headers: {

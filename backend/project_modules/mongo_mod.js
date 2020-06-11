@@ -164,7 +164,7 @@ module.exports.updateModuleName = function (id, newName, callback) { //update g√
       $set: {
         name: newName,
       },
-    }, function(err, res) {// test res
+    }, function (err, res) { // test res
       callback(200, "ok");
     });
 };
@@ -178,7 +178,7 @@ module.exports.updateModulePlace = function (id, newPlace, callback) {
       $set: {
         place: newPlace,
       },
-    }, function() {
+    }, function () {
       callback(200, "ok");
     });
 };
@@ -208,7 +208,7 @@ module.exports.setActuatorState = function (id, value, callback) {
       $set: {
         state: value,
       },
-    }, function() {
+    }, function () {
       callback(200, "Success");
     });
 };
@@ -252,13 +252,19 @@ module.exports.getModules = function (email, callback) {
       populate: [{
           path: "sensors",
           model: "sensors",
-          populate: {
-            path: "sensorData.data",
+          populate: [{
+            path: "data",
             model: "datas",
             options: {
               limit: 0
             },
-          },
+          }, {
+            path: "actuators",
+            model: "actuators",
+            options: {
+              limit: 0
+            },
+          }],
         },
         {
           path: "actuators",
