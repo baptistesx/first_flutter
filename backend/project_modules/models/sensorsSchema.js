@@ -4,22 +4,24 @@ var Schema = mongoose.Schema,
 
 const sensorsSchema = new Schema({
   name: String,
-  sensorData: [
-    {
-      dataType: String,
-      unit: String,
-      acceptableMin: Number,
-      acceptableMax: Number,
-      criticalMin: Number,
-      criticalMax: Number,
-      nominalValue: Number,
-      limitMin: Number,
-      limitMax: Number,
-      automaticMode: Boolean,
-      data: { type: ObjectId, ref: "datas" },
-    },
-  ],
-  module: { type: ObjectId, ref: "modules" },
+  dataType: String,
+  unit: String,
+  acceptableMin: Number,
+  acceptableMax: Number,
+  criticalMin: Number,
+  criticalMax: Number,
+  nominalValue: Number,
+  limitMin: Number,
+  limitMax: Number,
+  automaticMode: Boolean,
+  data: {
+    type: ObjectId,
+    ref: "datas"
+  },
+  module: {
+    type: ObjectId,
+    ref: "modules"
+  },
 });
 
 module.exports.sensors = mongoose.model("sensors", sensorsSchema);

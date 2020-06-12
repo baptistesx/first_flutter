@@ -307,19 +307,17 @@ module.exports.freeModule = function (email, id, callback) {
 
 module.exports.updateSensorDataAutomaticMode = function (
   sensorId,
-  sensorDataIndexValue,
   newValue,
   callback
 ) {
-  // console.log(sensorId);
-  // console.log(sensorDataIndexValue);
-  // console.log(newValue);
-
-  sensors.findOne({
+  sensors.updateOne({
     _id: sensorId
-  }, function (err, sensor) {
-    sensor.automaticMode = newValue;
-    sensor.save();
+  }, {
+    $set: {
+      automaticMode: newValue,
+    },
+  }, function (err, res) { // TODO: test res*
+    console.log(res)
     callback(200, "Success");
   });
 };
