@@ -309,6 +309,30 @@ app.get("/api/user/getModules", function (req, res) {
   });
 });
 
+app.get("/api/user/updateActuatorStateById", function (req, res) {
+  console.log("new request: /api/user/updateActuatorStateById");
+
+  //Vérification du JWT (JSON Web Token)
+  var email = jwt.verify(req.get("Authorization"), KEY, {
+    algorithm: "HS256"
+  }).email;
+
+  //Récupération de l'utilisateur associé au JWT
+  controler.userExists(email, function (err, user) {
+    if (user != null) {
+      var actuatorId = req.body.actuatorId;
+      var newValue = req.body.newValue;
+
+      mongo.updateActuatorStateById(actuatorId, newValue, function (code, answer) {
+        console.log("%j", answer);
+        res.status(code).send(answer);
+      });
+    } else {
+      res.status(401).send(err);
+    }
+  });
+});
+
 // Démarrage du serveur
 http.createServer(app).listen(process.env.PORT || 8081, function () {
   return console.log(
