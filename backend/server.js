@@ -309,7 +309,7 @@ app.get("/api/user/getModules", function (req, res) {
   });
 });
 
-app.get("/api/user/updateActuatorStateById", function (req, res) {
+app.post("/api/user/updateActuatorStateById", function (req, res) {
   console.log("new request: /api/user/updateActuatorStateById");
 
   //Vérification du JWT (JSON Web Token)

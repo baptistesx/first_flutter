@@ -357,3 +357,28 @@ module.exports.updateSensorDataConfig = function (
     callback(200, "Success");
   });
 };
+
+module.exports.updateActuatorStateById = function (
+  actuatorId,
+  newValue,
+  callback
+) {
+  console.log(actuatorId);
+  console.log(newValue);
+
+  actuators.updateOne({
+    _id: actuatorId
+  }, {
+    $set: {
+      state: (newValue === "true"),
+    },
+  }, function (err, res) { // TODO: test res*
+    if (err == null) {
+      console.log(res)
+      var test = (newValue === "true");
+      console.log(test)
+      callback(200, newValue);
+    }
+
+  });
+};
