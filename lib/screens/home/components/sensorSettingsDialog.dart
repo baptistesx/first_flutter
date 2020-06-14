@@ -1,17 +1,16 @@
-import 'package:cult_connect/components/constants.dart';
 import 'package:cult_connect/screens/home/components/module.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../home_page.dart';
 import 'sensor.dart';
-// const SERVER_IP = 'http://192.168.0.24:8081';
-const SERVER_IP = 'http://192.168.1.118:8081';
+import 'package:cult_connect/services/constants.dart' as Constants;
+
+const SERVER_IP = Constants.SERVER_IP;
 
 Future<String> updateSensor(String id, String newName) async {
   final response = await http.post(SERVER_IP + '/api/user/updateSensor',
-      headers: {"Authorization": jwt},
-      body: {"id": id, "newName": newName});
+      headers: {"Authorization": Constants.jwt}, body: {"id": id, "newName": newName});
   print(response.body);
   if (response.statusCode == 200) return response.body;
 
@@ -76,8 +75,7 @@ void displaySensorSettingsDialog(BuildContext context, Sensor sensor) {
                             if (_updateSensorFormKey.currentState.validate()) {
                               var newName = _newNameController.text;
                               var response;
-                              response = await updateSensor(
-                                  sensor.id, newName);
+                              response = await updateSensor(sensor.id, newName);
                               if (response == "ok") {
                                 sensor.name = newName;
                               }

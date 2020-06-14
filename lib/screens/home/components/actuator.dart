@@ -1,4 +1,3 @@
-import 'package:cult_connect/components/constants.dart';
 import 'package:cult_connect/screens/home/actuator_details_page.dart';
 import 'package:cult_connect/screens/home/components/data.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:cult_connect/services/constants.dart' as Constants;
 
-// const SERVER_IP = 'http://192.168.0.24:8081';
-const SERVER_IP = 'http://192.168.1.118:8081';
+const SERVER_IP = Constants.SERVER_IP;
 
 class Actuator {
   final String id;
@@ -53,7 +52,7 @@ class Actuator {
   Future<String> toggleState(value) async {
     var response = await http.post(SERVER_IP + '/api/user/setActuatorState',
         body: {"actuatorId": id, "value": value.toString()},
-        headers: {"Authorization": jwt});
+        headers: {"Authorization": Constants.jwt});
     state = value;
     stateIsSwitched = value;
     return response.body;
@@ -63,7 +62,7 @@ class Actuator {
     var response = await http.post(
         SERVER_IP + '/api/user/setActuatorAutomaticMode',
         body: {"actuatorId": id, "value": value.toString()},
-        headers: {"Authorization": jwt});
+        headers: {"Authorization": Constants.jwt});
     automaticMode = value;
     automaticModeIsSwitched = value;
     return response.body;
@@ -77,5 +76,27 @@ class Actuator {
         },
       ),
     );
+  }
+
+  Future<String> updateActuatorStateById(actuatorId, newValue) async {
+    var response = await http.post(
+        SERVER_IP + '/api/user/updateActuatorStateById',
+        body: {"actuatorId": actuatorId, "newValue": newValue.toString()},
+        headers: {"Authorization": Constants.jwt});
+    // automaticMode = newValue;
+    // automaticModeIsSwitched = value;
+    // print("before : ${state}");
+
+    // if (response.body == "false") {
+    //   print("res fallllse");
+    //   state = false;
+    // } else if (response.body == "true") {
+    //   print("res truuuue");
+    //   state = true;
+    // } else
+    //   print("probleme");
+    // print("after : ${state}");
+
+    return response.body;
   }
 }

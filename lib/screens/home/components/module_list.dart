@@ -94,47 +94,47 @@ class _ModulesListState extends State<ModulesList> {
       );
     }
 
-    for (Actuator actuator in module.actuators) {
-      // var callback;
-      // if(sensor.sensorData[sensorDataIndex]) = (bool s) => print(s);
-      // callback= null;
-      Switch stateSwitch = new Switch(
-        value: actuator.stateIsSwitched,
-        onChanged: //callback,
-            (value) {
-          setState(() {
-            null;
-            // actuator.toggleState(value);
-          });
-        },
-        activeTrackColor: Colors.lightGreenAccent,
-        activeColor: Colors.green,
-      );
-      columnContent.add(
-        new ListTile(
-            title: new Column(children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    actuator.name,
-                    style: new TextStyle(
-                        fontSize: 18.0, color: Colors.orangeAccent),
-                  ),
-                  stateSwitch,
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.grey,
-                    size: 15,
-                  ),
-                ],
-              ),
-            ]),
-            onTap: () {
-              actuator.pushActuatorDetails(context, stateSwitch);
-            }),
-      );
-    }
+    // for (Actuator actuator in module.actuators) {
+    //   // var callback;
+    //   // if(sensor.sensorData[sensorDataIndex]) = (bool s) => print(s);
+    //   // callback= null;
+    //   Switch stateSwitch = new Switch(
+    //     value: actuator.stateIsSwitched,
+    //     onChanged: //callback,
+    //         (value) {
+    //       setState(() {
+    //         null;
+    //         // actuator.toggleState(value);
+    //       });
+    //     },
+    //     activeTrackColor: Colors.lightGreenAccent,
+    //     activeColor: Colors.green,
+    //   );
+    //   columnContent.add(
+    //     new ListTile(
+    //         title: new Column(children: [
+    //           Row(
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             children: [
+    //               Text(
+    //                 actuator.name,
+    //                 style: new TextStyle(
+    //                     fontSize: 18.0, color: Colors.orangeAccent),
+    //               ),
+    //               stateSwitch,
+    //               Icon(
+    //                 Icons.arrow_forward_ios,
+    //                 color: Colors.grey,
+    //                 size: 15,
+    //               ),
+    //             ],
+    //           ),
+    //         ]),
+    //         onTap: () {
+    //           actuator.pushActuatorDetails(context, stateSwitch);
+    //         }),
+    //   );
+    // }
     return columnContent;
   }
 

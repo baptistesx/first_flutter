@@ -1,4 +1,3 @@
-import 'package:cult_connect/components/constants.dart';
 import 'package:cult_connect/screens/home/components/actuator.dart';
 import 'package:cult_connect/screens/home/components/data.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../sensor_details_page.dart';
+import 'package:cult_connect/services/constants.dart' as Constants;
 
-// const SERVER_IP = 'http://192.168.0.24:8081';
-const SERVER_IP = 'http://192.168.1.118:8081';
+const SERVER_IP = Constants.SERVER_IP;
 
 class Sensor {
   final String id;
@@ -74,20 +73,15 @@ class Sensor {
         data: Data.fromJson(json['data']),
         automaticMode: json['automaticMode'],
         actuators: (json['actuators'] as List)
-          .map((actuator) => Actuator.fromJson(actuator))
-          .toList());
+            .map((actuator) => Actuator.fromJson(actuator))
+            .toList());
   }
 
-  Future<String> updateSensorDataAutomaticMode(
-      sensorId, index, newValue) async {
-    var response = await http
-        .post(SERVER_IP + '/api/user/updateSensorAutomaticMode', body: {
-      "sensorId": sensorId,
-      "sensorDataIndex": index.toString(),
-      "newValue": newValue.toString()
-    }, headers: {
-      "Authorization": jwt
-    });
+  Future<String> updateSensorDataAutomaticMode(sensorId, newValue) async {
+    var response = await http.post(
+        SERVER_IP + '/api/user/updateSensorAutomaticMode',
+        body: {"sensorId": sensorId, "newValue": newValue.toString()},
+        headers: {"Authorization": Constants.jwt});
     automaticMode = newValue;
     // automaticModeIsSwitched = value;
     return response.body;
@@ -101,5 +95,62 @@ class Sensor {
         },
       ),
     );
+  }
+
+  listSensorActuators() {
+    bool isSwitched = false;
+    List<Widget> columnContent = [];
+    for (Actuator actuator in this.actuators) {
+      // var callback;
+      // if(sensor.sensorData[sensorDataIndex]) = (bool s) => print(s);
+      // callback= null;
+      Switch stateSwitch = new Switch(
+        value: actuator.state,
+        onChanged: (value) {
+          // setState(() {
+          //   isSwitched = value;
+          //   print(isSwitched);
+          // });
+        },
+        // onChanged: (value) async {
+        //   var res = await actuator.updateActuatorStateById(actuator.id, value);
+        //   print(res);
+        //   setState(() {
+        //     print("before : ${actuator.state}");
+        //     actuator.state = value;
+        //     print("after : ${actuator.state}");
+        //   });
+        //   // actuator.state = res as bool;
+        // },
+        activeTrackColor: Colors.lightGreenAccent,
+        activeColor: Colors.green,
+      );
+      columnContent.add(
+        new ListTile(
+            title: new Column(children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    actuator.name,
+                    style: new TextStyle(
+                        fontSize: 18.0, color: Colors.orangeAccent),
+                  ),
+                  stateSwitch,
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.grey,
+                    size: 15,
+                  ),
+                ],
+              ),
+            ]),
+            onTap: () {
+              print("ok");
+              // actuator.pushActuatorDetails(context, stateSwitch);
+            }),
+      );
+    }
+    return columnContent;
   }
 }

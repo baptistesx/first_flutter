@@ -7,11 +7,9 @@ import 'package:flutter/material.dart';
 import 'dart:convert'; // show json, base64, ascii;
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:cult_connect/services/constants.dart' as Constants;
 
-// const SERVER_IP = 'http://10.0.2.2:8081';
-// const SERVER_IP = 'http://192.168.1.26:8081';
-// const SERVER_IP = 'http://192.168.0.24:8081';
-const SERVER_IP = 'http://192.168.1.118:8081';
+const SERVER_IP = Constants.SERVER_IP;
 
 // Object getModules(http.Client client, jwt) async {
 //   final response = await client

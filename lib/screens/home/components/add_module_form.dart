@@ -3,11 +3,9 @@ import 'package:cult_connect/screens/home/home_page.dart';
 import 'dart:convert' show json, base64, ascii;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:cult_connect/services/constants.dart' as Constants;
 
-// const SERVER_IP = 'http://10.0.2.2:8081';
-// const SERVER_IP = 'http://192.168.1.26:8081';
-// const SERVER_IP = 'http://192.168.0.24:8081';
-const SERVER_IP = 'http://192.168.1.118:8081';
+const SERVER_IP = Constants.SERVER_IP;
 
 Future<String> addModule(name, place, publicID, privateID, jwt) async {
   print("launch request");
@@ -119,9 +117,7 @@ class _AddModuleFormState extends State<AddModuleForm> {
                       // code when the user saves the form.
                     },
                     validator: (String value) {
-                      return value.length == 0
-                          ? 'Please, enter a place'
-                          : null;
+                      return value.length == 0 ? 'Please, enter a place' : null;
                     },
                   ),
                 ),

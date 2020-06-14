@@ -1,13 +1,13 @@
-import 'package:cult_connect/components/constants.dart';
 import 'package:cult_connect/screens/home/components/module.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../home_page.dart';
+// import '../home_page.dart';
+import 'package:cult_connect/services/constants.dart' as Constants;
 
 Future<String> updateModule(String id, String newName, String newPlace) async {
   final response = await http.post(SERVER_IP + '/api/user/updateModule',
-      headers: {"Authorization": jwt},
+      headers: {"Authorization": Constants.jwt},
       body: {"id": id, "newName": newName, "newPlace": newPlace});
   print(response.body);
   if (response.statusCode == 200) return response.body;
@@ -17,7 +17,7 @@ Future<String> updateModule(String id, String newName, String newPlace) async {
 
 Future<String> removeModule(String id) async {
   final response = await http.post(SERVER_IP + '/api/user/removeModule',
-      headers: {"Authorization": jwt}, body: {"id": id});
+      headers: {"Authorization": Constants.jwt}, body: {"id": id});
   print(response.body);
   if (response.statusCode == 200) return response.body;
 

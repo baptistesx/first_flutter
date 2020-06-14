@@ -4,18 +4,15 @@ import 'package:cult_connect/screens/home/home_page.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:cult_connect/services/constants.dart' as Constants;
 
-// const SERVER_IP = 'http://10.0.2.2:8081';
-// const SERVER_IP = 'http://192.168.1.26:8081';
-// const SERVER_IP = 'http://192.168.0.24:8081';
-// const SERVER_IP = 'http://192.168.0.24:8081';
-const SERVER_IP = 'http://192.168.1.118:8081';
+const SERVER_IP = Constants.SERVER_IP;
 
 final storage = FlutterSecureStorage();
 
 Future<String> fetchConnectionIdentifiers(String email, String pwd) async {
-  final response =
-      await http.post(SERVER_IP + '/api/login', body: {"email": email, "pwd": pwd});
+  final response = await http
+      .post(SERVER_IP + '/api/login', body: {"email": email, "pwd": pwd});
   print(response.body);
   if (response.statusCode == 200) return response.body;
 
@@ -104,7 +101,7 @@ class _ConnectionFormState extends State<ConnectionForm> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                // AddFirstModulePage.test(jwt)));
+                                    // AddFirstModulePage.test(jwt)));
                                     HomePage.fromBase64(jwt)));
                       } else {
                         displayDialog(context, "An Error Occurred",

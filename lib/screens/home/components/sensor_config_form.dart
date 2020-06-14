@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:cult_connect/components/constants.dart';
 import 'package:cult_connect/screens/add_first_module_page.dart';
 import 'package:cult_connect/screens/configuration/components/config_sliders_widgets.dart';
 import 'package:cult_connect/screens/home/components/sensor.dart';
@@ -9,13 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'data.dart';
+import 'package:cult_connect/services/constants.dart' as Constants;
 
-// const SERVER_IP = 'http://10.0.2.2:8081';
-// const SERVER_IP = 'http://192.168.1.26:8081';
-// const SERVER_IP = 'http://192.168.0.24:8081';
-// const SERVER_IP = 'http://192.168.0.24:8081';
-const SERVER_IP = 'http://192.168.1.118:8081';
+const SERVER_IP = Constants.SERVER_IP;
+
 final storage = FlutterSecureStorage();
+
+String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
 
 class SensorConfigForm extends StatefulWidget {
   Sensor sensor;
@@ -50,7 +49,7 @@ class _SensorConfigForm extends State<SensorConfigForm> {
   Future<String> updateSensorDataConfig(Sensor sensor) async {
     final response = await http
         .post(SERVER_IP + '/api/user/updateSensorDataConfig', headers: {
-      "Authorization": jwt
+      "Authorization": Constants.jwt
     }, body: {
       "sensorId": sensor.id,
       "sensorDataIndex": sensorDataIndex.toString(),
@@ -84,6 +83,12 @@ class _SensorConfigForm extends State<SensorConfigForm> {
     print("bbb:" + sensor.criticalMin.toString());
     var limitMin = sensor.limitMin;
     var limitMax = sensor.limitMax;
+    var dataType = sensor.dataType;
+    var dataTypeWithPronum;
+    if (dataType == "humidité")
+      dataTypeWithPronum = "l'" + dataType;
+    else
+      dataTypeWithPronum = "la " + dataType;
     // var acceptableMin = sensor.acceptableMin;
     // var acceptableMax = sensor.acceptableMax;
     // var okRangeValues = RangeValues(sensor.acceptableMin, sensor.acceptableMax);
@@ -102,8 +107,9 @@ class _SensorConfigForm extends State<SensorConfigForm> {
                   children: <Widget>[
                     Text('Remarque:',
                         style: TextStyle(decoration: TextDecoration.underline)),
-                    Text(
-                        'les actionneurs seront actifs seulement lorsque la température ne sera pas "acceptable".'),
+                    Text('Les actionneurs seront actifs seulement lorsque ' +
+                        dataTypeWithPronum +
+                        ' ne sera pas "acceptable".'),
                   ],
                 ),
               ),
@@ -114,8 +120,8 @@ class _SensorConfigForm extends State<SensorConfigForm> {
                   children: <Widget>[
                     Text('Attention:',
                         style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text(
-                        'la température nominale doit être comprise entre les bornes de température acceptable. '),
+                    Text(capitalize(dataTypeWithPronum) +
+                        ' nominale doit être comprise entre les bornes de température acceptable. '),
                   ],
                 ),
               ),
@@ -125,7 +131,8 @@ class _SensorConfigForm extends State<SensorConfigForm> {
             children: <Widget>[
               Column(
                 children: [
-                  Text('Température nominale (°C)'),
+                  Text(
+                      capitalize(dataType) + ' nominale (' + sensor.unit + ')'),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Icon(Icons.wb_sunny),
                     Slider(
@@ -151,7 +158,10 @@ class _SensorConfigForm extends State<SensorConfigForm> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Température acceptable (°C)'),
+                  Text(capitalize(dataType) +
+                      ' acceptable (' +
+                      sensor.unit +
+                      ')'),
                   Row(mainAxisSize: MainAxisSize.min, children: [
                     Icon(Icons.wb_sunny),
                     RangeSlider(
@@ -181,7 +191,7 @@ class _SensorConfigForm extends State<SensorConfigForm> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Min (°C, alerte)'),
+                  Text('Min (' + sensor.unit + ', alerte)'),
                   Row(mainAxisSize: MainAxisSize.min, children: [
                     Icon(Icons.wb_sunny),
                     Slider(
@@ -206,7 +216,7 @@ class _SensorConfigForm extends State<SensorConfigForm> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Max (°C, alerte)'),
+                  Text('Max (' + sensor.unit + ', alerte)'),
                   Row(mainAxisSize: MainAxisSize.min, children: [
                     Icon(Icons.wb_sunny),
                     Slider(
