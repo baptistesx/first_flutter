@@ -1,4 +1,5 @@
 //TODO: créer fichier de log (écrire dans un fichier: date, heure, commande, resultat)
+// FAIT(project_modules/models/loggerSchema.js et backend/global.log) --> foncitonnel, à améliorer
 
 //TODO: décrire chaque paramètre des fonctions + callback
 
@@ -27,6 +28,7 @@ var bodyParser = require("body-parser");
 var mongo = require("./project_modules/mongo_mod");
 var controler = require("./project_modules/control_mod");
 var jwt = require("jsonwebtoken");
+var logger = require("./project_modules/models/loggerSchema").logger
 
 const KEY = "m yincredibl y(!!1!11!)zpG6z2s8)Key'!";
 
@@ -42,24 +44,28 @@ app.post("/api/signup", function (req, res) {
   var password = req.body.pwd;
 
   mongo.register(email, password, function (code, answer) {
+    logger.info(answer)
     res.status(code).send(answer);
   });
 });
 
 //Route pour connexion de l'utilisateur
 app.post("/api/login", function (req, res) {
+  logger.info("new request: /api/login")
   console.log("new request: /api/login");
 
   var email = req.body.email;
   var password = req.body.pwd;
 
   mongo.logUser(email, password, function (code, answer) {
+    logger.info(answer)
     res.status(code).send(answer);
   });
 });
 
 //Route pour ajouter un module à l'utilisateur
 app.post("/api/user/addModule", function (req, res) {
+  logger.info("new request: /api/user/addModule")
   console.log("new request: /api/user/addModule");
   //Vérification du JWT (JSON Web Token)
   //Vérifie si le token match bien avec l'email
@@ -75,6 +81,7 @@ app.post("/api/user/addModule", function (req, res) {
     req.body.publicID,
     req.body.privateID,
     function (answer, code) {
+      logger.info(answer)
       res.status(code).send(answer);
     }
   );
@@ -82,6 +89,7 @@ app.post("/api/user/addModule", function (req, res) {
 
 //Mise à jour de l'état d'un actionneur d'id reçu en paramètre
 app.post("/api/user/setActuatorState", function (req, res) {
+  logger.info("new request: /api/user/setActuatorState")
   console.log("new request: /api/user/setActuatorState");
 
   var id = req.body.actuatorId;
@@ -98,6 +106,7 @@ app.post("/api/user/setActuatorState", function (req, res) {
       //TODO: Faire réelle requete au module et changer etat en bdd que si validé par module
 
       mongo.setActuatorState(id, value, function (code, answer) {
+        logger.info(answer)
         res.status(code).send(answer);
       });
     } else {
@@ -108,6 +117,7 @@ app.post("/api/user/setActuatorState", function (req, res) {
 
 //Mise à jour du mode automatic de l'actionneur
 app.post("/api/user/setActuatorAutomaticMode", function (req, res) {
+  logger.info("new request: /api/user/setActuatorAutomaticMode")
   console.log("new request: /api/user/setActuatorAutomaticMode");
 
   var id = req.body.actuatorId;
@@ -124,6 +134,7 @@ app.post("/api/user/setActuatorAutomaticMode", function (req, res) {
       //TODO: Faire réelle requete au module et changer etat en bdd que si validé par module
 
       mongo.setActuatorAutomaticMode(id, value, function (code, answer) {
+        logger.info(answer)
         res.status(code).send(answer);
       });
     } else {
@@ -134,6 +145,7 @@ app.post("/api/user/setActuatorAutomaticMode", function (req, res) {
 
 //Mise à jour du mode automatic de l'actionneur
 app.post("/api/user/updateSensorAutomaticMode", function (req, res) {
+  logger.info("new request: /api/user/updateSensorAutomaticMode")
   console.log("new request: /api/user/updateSensorAutomaticMode");
 
   var sensorId = req.body.sensorId;
@@ -153,6 +165,7 @@ app.post("/api/user/updateSensorAutomaticMode", function (req, res) {
         sensorId,
         newValue,
         function (code, answer) {
+          logger.info(answer)
           res.status(code).send(answer);
         }
       );
@@ -164,6 +177,7 @@ app.post("/api/user/updateSensorAutomaticMode", function (req, res) {
 
 //Mise à jour de la config d'un sensorData
 app.post("/api/user/updateSensorDataConfig", function (req, res) {
+  logger.info("new request: /api/user/updateSensorDataConfig")
   console.log("new request: /api/user/updateSensorDataConfig");
 
   var sensorId = req.body.sensorId;
@@ -193,6 +207,7 @@ app.post("/api/user/updateSensorDataConfig", function (req, res) {
         newCriticalMin,
         newCriticalMax,
         function (code, answer) {
+          logger.info(answer)
           res.status(code).send(answer);
         }
       );
@@ -205,6 +220,7 @@ app.post("/api/user/updateSensorDataConfig", function (req, res) {
 
 //Route pour mise à jour du module d'id reçu en paramètre
 app.post("/api/user/updateModule", function (req, res) {
+  logger.info("new request: /api/user/updateModule");
   console.log("new request: /api/user/updateModule");
 
   var id = req.body.id;
@@ -234,6 +250,7 @@ app.post("/api/user/updateModule", function (req, res) {
           response = answer;
         });
       }
+      logger.info(response)
       res.status(codeResponse).send(response);
     } else {
       res.status(401).send(err)
@@ -243,6 +260,7 @@ app.post("/api/user/updateModule", function (req, res) {
 
 //Route pour mise à jour d'un capteur d'id reçu en paramètre
 app.post("/api/user/updateSensor", function (req, res) {
+  logger.info("new request: /api/user/updateSensor")
   console.log("new request: /api/user/updateSensor");
 
   var id = req.body.id;
@@ -257,6 +275,7 @@ app.post("/api/user/updateSensor", function (req, res) {
     if (user != null) {
       // console.log(newName);
       mongo.updateSensor(id, newName, function (code, answer) {
+        logger.info(answer)
         res.status(code).send(answer);
       });
     } else {
@@ -267,6 +286,7 @@ app.post("/api/user/updateSensor", function (req, res) {
 
 //Utilisateur "supprime" un module de sa liste => libérer module mais pas supprimer
 app.post("/api/user/removeModule", function (req, res) {
+  logger.info("new request: /api/user/removeModule")
   console.log("new request: /api/user/removeModule");
 
   //Vérification du JWT (JSON Web Token)
@@ -280,6 +300,7 @@ app.post("/api/user/removeModule", function (req, res) {
       var id = req.body.id;
 
       mongo.freeModule(email, id, function (code, answer) {
+        logger.info(answer)
         res.status(code).send(answer);
       });
     } else {
@@ -289,6 +310,7 @@ app.post("/api/user/removeModule", function (req, res) {
 });
 
 app.get("/api/user/getModules", function (req, res) {
+  logger.info("new request: /api/user/getModules")
   console.log("new request: /api/user/getModules");
 
   //Vérification du JWT (JSON Web Token)
@@ -300,6 +322,7 @@ app.get("/api/user/getModules", function (req, res) {
   controler.userExists(email, function (err, user) {
     if (user != null) {
       mongo.getModules(email, function (code, answer) {
+        logger.info(answer)
         console.log("%j", answer);
         res.status(code).send(answer);
       });
@@ -310,6 +333,7 @@ app.get("/api/user/getModules", function (req, res) {
 });
 
 app.post("/api/user/updateActuatorStateById", function (req, res) {
+  logger.info("new request: /api/user/updateActuatorStateById")
   console.log("new request: /api/user/updateActuatorStateById");
 
   //Vérification du JWT (JSON Web Token)
@@ -324,6 +348,7 @@ app.post("/api/user/updateActuatorStateById", function (req, res) {
       var newValue = req.body.newValue;
 
       mongo.updateActuatorStateById(actuatorId, newValue, function (code, answer) {
+        logger.info(answer)
         console.log("%j", answer);
         res.status(code).send(answer);
       });
@@ -335,6 +360,7 @@ app.post("/api/user/updateActuatorStateById", function (req, res) {
 
 // Démarrage du serveur
 http.createServer(app).listen(process.env.PORT || 8081, function () {
+  logger.info("Started user authentication server listening on port 8081")
   return console.log(
     "Started user authentication server listening on port 8081"
   );
